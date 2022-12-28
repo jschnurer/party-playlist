@@ -29,7 +29,7 @@ export default function getPlaylistsController(socketManager: SocketClientManage
   });
 
   // Creates a new room.
-  controller.router.post("", (req, res) => {
+  controller.router.post("", (_, res) => {
     // Generate new 5-digit codes until a unique one is created.
     let roomCode = generateNewRoomCode(5);
     while (Object.keys(rooms).indexOf(roomCode) > -1) {
@@ -37,6 +37,10 @@ export default function getPlaylistsController(socketManager: SocketClientManage
     }
 
     rooms[roomCode] = new Playlist(roomCode);
+
+    res.status(201).json({
+      roomCode: roomCode,
+    });
   });
 
   // Add a song to the playlist
