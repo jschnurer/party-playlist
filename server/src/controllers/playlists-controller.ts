@@ -7,7 +7,7 @@ import { SocketClientManagement } from "socketio/SocketClientManagement";
 
 export default function getPlaylistsController(socketManager: SocketClientManagement): IController {
   const controller = {
-    baseRoute: "/blobs",
+    baseRoute: "/playlists",
     router: express.Router(),
   };
 
