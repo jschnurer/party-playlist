@@ -1,0 +1,12 @@
+<div mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <mat-label>Enter party code</mat-label>
+    <input matInput [formControl]="roomCode" required maxLength="4">
+    <mat-error *ngIf="roomCode.invalid">{{getErrorMessage()}}</mat-error>
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Nevermind :(</button>
+  <button mat-button (click)="onJoinPartyClicked()">Join the Party!</button>
+</div>

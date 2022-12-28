@@ -1,0 +1,11 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+
+  button {
+    width: 250px;
+    height: 100px;
+  }
+}
