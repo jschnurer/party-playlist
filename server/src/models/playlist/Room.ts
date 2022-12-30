@@ -1,18 +1,26 @@
+import { SocketClientManagement } from "socketio/SocketClientManagement";
 import ISong from "./ISong";
-import IUser from "./IUser";
 
-export default class Playlist {
+export default class Room {
   /** The code of the room this playlist represents. */
   private roomCode: string;
   /** The list of all songs that have been suggested. */
   private songs: ISong[] = [];
   /** The song currently playing. */
   private currentSong: ISong | undefined;
-  /** The list of people currently connected to the room. */
-  private users: IUser[] = [];
+  /** The uuid of the room owner. */
+  private ownerUUId: string;
+  /** The socket.io server. */
+  private socketServer: SocketClientManagement;
 
-  constructor(roomCode: string) {
-    this.roomCode = roomCode;
+  constructor(properties: IPlaylistConstructorArgs) {
+    this.roomCode = properties.roomCode;
+    this.ownerUUId = properties.ownerUUId;
+    this.socketServer = properties.socketServer;
+  }
+
+  getOwnerUUId() {
+    return this.ownerUUId;
   }
 
   getRoomCode() {
@@ -26,12 +34,14 @@ export default class Playlist {
   getNextSong(): ISong | undefined {
     const contributorUUIDs = Array.from(new Set(this.songs.map(x => x.contributedByUUId)));
 
+    const currSongId = this.currentSong?.youtubeVideoId;
+
     // Get the following info for each contributor:
     //  * The number of this person's songs that have been played.
     //  * The next song suggestion contributed by this person.
     const contributionInfo = contributorUUIDs.map(contributorUUID => {
       const contributedSongs = this.songs.filter(x => x.contributedByUUId === contributorUUID);
-      const nextSuggestion = contributedSongs.filter(x => !x.wasPlayed)?.[0];
+      const nextSuggestion = contributedSongs.filter(x => !x.wasPlayed && x.youtubeVideoId !== currSongId)?.[0];
 
       return {
         contributorUUID,
@@ -80,28 +90,56 @@ export default class Playlist {
     // Find the next song by someone other that the contributor of the current song.
     const nextByNotCurrentUser = contributionInfo
       .filter(x => x.contributorUUID !== this.getCurrentSong()?.contributedByUUId)
-      ?.[0].nextSuggestion;
+      ?.[0]?.nextSuggestion;
 
     // Return the next non-current-user's song or, if there is no one, the next
     // song by anyone.
     return nextByNotCurrentUser ?? contributionInfo[0].nextSuggestion;
   }
 
-  getUsers() {
-    return this.users;
-  }
-
   addSong(song: ISong) {
     this.songs.push(song);
+
+    console.debug(`Added song with videoId '${song.youtubeVideoId}' to room '${this.roomCode}'.`);
+
+    this.emitSocketInfo();
   }
 
   playNextSong(): ISong | undefined {
+    if (this.currentSong) {
+      this.currentSong.wasPlayed = true;
+    }
+
     const nextSong = this.getNextSong();
 
     if (nextSong) {
       this.currentSong = nextSong;
     }
 
+    console.debug(`Next song is now '${nextSong?.youtubeVideoId}' in room '${this.roomCode}'.`);
+
+    this.emitSocketInfo();
+
     return nextSong;
   }
+
+  emitSocketInfo() {
+    const songInfo = {
+      now_playing: this.getCurrentSong()?.title,
+      next_up: this.getNextSong()?.title,
+    };
+
+    this.socketServer
+      .io
+      .to(`ROOM_${this.roomCode}`)
+      .emit("songInfo", songInfo);
+
+    console.debug(`Emitted ${JSON.stringify(songInfo)} to ROOM_${this.roomCode}.`);
+  }
+}
+
+export interface IPlaylistConstructorArgs {
+  roomCode: string,
+  ownerUUId: string,
+  socketServer: SocketClientManagement,
 }

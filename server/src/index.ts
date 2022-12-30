@@ -1,5 +1,6 @@
 import compression from "compression";
-import getPlaylistsController from "controllers/playlists-controller";
+import getRoomsController from "controllers/rooms-controller";
+import getSongsController from "controllers/songs-controller";
 import cors from "cors";
 import express, { json, Request, Response, static as staticApp } from "express";
 import fs from "fs";
@@ -63,7 +64,8 @@ app.use("*", (_, res, next) => {
 // }));
 
 // Set up all the routers.
-useRouter(getPlaylistsController(socketServer));
+useRouter(getRoomsController(socketServer));
+useRouter(getSongsController());
 
 // Set up socket server.
 socketServer.start();
