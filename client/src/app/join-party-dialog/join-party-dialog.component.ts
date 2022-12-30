@@ -7,13 +7,19 @@ import { MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./join-party-dialog.component.scss']
 })
 export class JoinPartyDialogComponent {
-  roomCode = new FormControl('', [Validators.required]);
+  roomCode = new FormControl('', [Validators.required, Validators.pattern("[a-zA-Z0-9]")]);
+  userName = new FormControl('', [Validators.required]);
 
   constructor(
     public dialogRef: MatDialogRef<JoinPartyDialogComponent>,
   ) { }
 
   onJoinPartyClicked() {
+    if (this.getRoomCodeErrorMessage()
+      || this.getUserNameErrorMessage()) {
+      return;
+    }
+
     // TODO: Call service to check room code validity
     // and if error, put error into form field,
     // otherwise redirect user to the /playlist?party=:roomCode
@@ -24,9 +30,13 @@ export class JoinPartyDialogComponent {
     });
   }
 
-  getErrorMessage() {
+  getRoomCodeErrorMessage() {
     if (this.roomCode.hasError("required")) {
-      return "You must enter a value";
+      return "You really do need to enter a party code.";
+    }
+
+    if (this.roomCode.hasError("pattern")) {
+      return "Room codes only have letters and numbers.";
     }
 
     if (this.roomCode.hasError("roomNotFound")) {
@@ -34,5 +44,17 @@ export class JoinPartyDialogComponent {
     }
 
     return "";
+  }
+
+  getUserNameErrorMessage() {
+    if (this.userName.hasError("required")) {
+      return "What's your name?!";
+    }
+
+    return "";
+  }
+
+  forceAlphaNumericOnly(text: string) {
+    return text.replaceAll(/[^a-zA-Z0-9]/, '').toUpperCase();
   }
 }

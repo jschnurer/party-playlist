@@ -1,0 +1,29 @@
+{
+  "name": "party-playlist",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start:server": "cd server && npm run start",
+    "start:client": "cd client && npm run start",
+    "start": "run-p --race start:server start:client",
+    "build:server": "cd server && npm run build",
+    "build:client": "cd client && npm run build",
+    "build": "run-s build:server build:client finalize-build",
+    "finalize-build": "node ./.scripts/finalize-build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jschnurer/party-playlist.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jschnurer/party-playlist/issues"
+  },
+  "homepage": "https://github.com/jschnurer/party-playlist#readme",
+  "devDependencies": {
+    "fs-extra": "^11.1.0",
+    "npm-run-all": "^4.1.5"
+  }
+}

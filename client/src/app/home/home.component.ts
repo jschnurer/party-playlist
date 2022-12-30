@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CreatePartyDialogComponent } from '../create-party-dialog/create-party-dialog.component';
 import { JoinPartyDialogComponent } from '../join-party-dialog/join-party-dialog.component';
 
 @Component({
@@ -9,13 +10,14 @@ import { JoinPartyDialogComponent } from '../join-party-dialog/join-party-dialog
 })
 export class HomeComponent {
 
-  constructor(public dialog: MatDialog) {}
+  constructor(public joinPartyDialog: MatDialog,
+    public createPartyDialog: MatDialog) {}
 
   onJoinPartyClick() {
-    this.dialog.open(JoinPartyDialogComponent);
+    this.joinPartyDialog.open(JoinPartyDialogComponent);
   }
 
   onCreatePartyClick() {
-    alert("CREATE PARTY");
+    this.createPartyDialog.open(CreatePartyDialogComponent);
   }
 }
