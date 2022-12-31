@@ -1,0 +1,18 @@
+<h1>What's your name?</h1>
+
+<p>Before you can party, you need a name. Your name is shown to others in the party when playing music you suggested.
+</p>
+
+<div class="fcol">
+
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput [formControl]="userName" required maxLength="20">
+    <mat-error *ngIf="userName.invalid">{{getUserNameErrorMessage()}}</mat-error>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="onSetNameClicked()">
+    Set Name
+  </button>
+
+</div>

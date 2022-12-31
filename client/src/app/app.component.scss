@@ -1,0 +1,24 @@
+@import "../palette.scss";
+
+.main-layout {
+  display: grid;
+  inset: 0;
+  position: fixed;
+  grid-template-columns: 1fr fit-content(900px) 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "header header header"
+    ". content .";
+
+  .header {
+    grid-area: header;
+    padding: 1em;
+    font-size: 1.25em;
+    background-color: $primary;
+  }
+
+  .content {
+    grid-area: content;
+    padding: 1em;
+  }
+}

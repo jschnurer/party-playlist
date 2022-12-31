@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import IUser from 'src/models/IUser';
+import { UserService } from './services/auth/user.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'party-playlist';
+  user!: IUser;
+
+  constructor(private userService: UserService) {
+    this.userService.user.subscribe(user => this.user = user);
+  }
+
+  
 }

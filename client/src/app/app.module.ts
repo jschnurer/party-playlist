@@ -13,6 +13,7 @@ import { HomeComponent } from './home/home.component';
 import { JoinPartyDialogComponent } from './join-party-dialog/join-party-dialog.component';
 import { PlayerComponent } from './player/player.component';
 import { CreatePartyDialogComponent } from './create-party-dialog/create-party-dialog.component';
+import { SignInComponent } from './sign-in/sign-in.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { CreatePartyDialogComponent } from './create-party-dialog/create-party-d
     PlayerComponent,
     HomeComponent,
     JoinPartyDialogComponent,
-    CreatePartyDialogComponent
+    CreatePartyDialogComponent,
+    SignInComponent
   ],
   imports: [
     BrowserModule,
