@@ -5,7 +5,7 @@ import { PlayerComponent } from './player/player.component';
 
 const routes: Routes = [
   { path: "", component: HomeComponent, },
-  { path: "playlist", component: PlayerComponent, },
+  { path: "party/:roomCode", component: PlayerComponent, },
 ];
 
 @NgModule({

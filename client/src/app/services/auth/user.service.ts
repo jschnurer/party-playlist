@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import IUser from 'src/models/IUser';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  user: Subject<IUser> = new Subject<IUser>();
+  user: BehaviorSubject<IUser> = new BehaviorSubject<IUser>({ name: "" });
 
   constructor() {
     this.loadUserFromLocalStorage();
@@ -18,27 +18,17 @@ export class UserService {
   }
 
   private loadUserFromLocalStorage() {
-    // Load the user data from localStorage if it exists.
     const localStorageUserData = window.localStorage.getItem("user");
-
-    let userWasSet = false;
 
     if (localStorageUserData) {
       try {
         const localUser = JSON.parse(localStorageUserData);
         if (localUser) {
-          this.setUser({
+          this.user.next({
             name: localUser.name?.toString() || "",
           });
-          userWasSet = true;
         }
       } catch { }
-    }
-
-    if (!userWasSet) {
-      this.setUser({
-        name: "",
-      });
     }
   }
 }

@@ -4,7 +4,7 @@
   </div>
 
   <div class="content">
-    <div *ngIf="user; else notSignedIn">
+    <div *ngIf="user?.name; else notSignedIn">
       <router-outlet></router-outlet>
     </div>
 

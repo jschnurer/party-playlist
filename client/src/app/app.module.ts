@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,8 +13,8 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { JoinPartyDialogComponent } from './join-party-dialog/join-party-dialog.component';
 import { PlayerComponent } from './player/player.component';
-import { CreatePartyDialogComponent } from './create-party-dialog/create-party-dialog.component';
 import { SignInComponent } from './sign-in/sign-in.component';
+import { RoomComponent } from './room/room.component';
 
 @NgModule({
   declarations: [
@@ -21,8 +22,8 @@ import { SignInComponent } from './sign-in/sign-in.component';
     PlayerComponent,
     HomeComponent,
     JoinPartyDialogComponent,
-    CreatePartyDialogComponent,
-    SignInComponent
+    SignInComponent,
+    RoomComponent
   ],
   imports: [
     BrowserModule,
@@ -34,6 +35,7 @@ import { SignInComponent } from './sign-in/sign-in.component';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

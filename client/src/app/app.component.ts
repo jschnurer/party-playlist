@@ -14,6 +14,4 @@ export class AppComponent {
   constructor(private userService: UserService) {
     this.userService.user.subscribe(user => this.user = user);
   }
-
-  
 }
