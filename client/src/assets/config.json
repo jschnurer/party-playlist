@@ -1,4 +1,5 @@
 {
-  "baseApiEndpoint": "#{BaseApiEndpoint}#",
-  "socketEndpoint": "#{SocketEndpoint}#"
+  "baseApiEndpoint": "#{baseApiEndpoint}#",
+  "socketEndpoint": "#{socketEndpoint}#",
+  "youtubeApiKey": "#{youtubeApiKey}#"
 }
