@@ -1,0 +1,40 @@
+<h1 mat-dialog-title>
+  <form class="search-form" (submit)="onSearchSubmit()">
+    <mat-form-field appearance="fill" class="full-width">
+      <input matInput type="text" placeholder="Search Youtube" [(ngModel)]="searchTerm" name="searchTerm">
+      <button mat-button matSuffix>
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+  </form>
+</h1>
+<div mat-dialog-content>
+  <p *ngIf="!searchResult?.items?.length; else hasSearchResults">
+    No search results...
+  </p>
+
+  <ng-template #hasSearchResults>
+    <div class="video-results">
+      <ng-container *ngFor="let item of searchResult?.items">
+        <div class="fcol video-result">
+          <span class="title">
+            {{item.snippet.title}}
+          </span>
+          <div class="frow">
+            <img src="{{item.snippet.thumbnails.default.url}}" alt="" />
+
+            <button mat-raised-button (click)="onSelectVideo(item)">
+              Add to playlist
+            </button>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+      </ng-container>
+    </div>
+  </ng-template>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Job Done!</button>
+</div>

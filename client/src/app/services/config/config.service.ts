@@ -10,6 +10,7 @@ export class ConfigService {
   config: BehaviorSubject<IConfig> = new BehaviorSubject<IConfig>({
     baseApiEndpoint: "",
     socketEndpoint: "",
+    youtubeApiKey: "",
   });
 
   constructor(private http: HttpClient) {}

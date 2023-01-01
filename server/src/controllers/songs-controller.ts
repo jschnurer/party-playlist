@@ -45,7 +45,10 @@ export default function getSongsController(): IController {
       title: videoTitle,
     });
 
-    res.sendStatus(200);
+    res.status(200).json({
+      nowPlaying: room.getCurrentSong(),
+      nextUp: room.getNextSong(),
+    });
   });
 
   // Used by the owner to skip to the next song (or when current song finishes).
@@ -66,6 +69,7 @@ export default function getSongsController(): IController {
 
     res.status(200).json({
       nowPlaying: nextSong,
+      nextUp: room.getNextSong(),
     });
   });
 

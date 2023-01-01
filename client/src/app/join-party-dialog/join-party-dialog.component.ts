@@ -1,18 +1,16 @@
 import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { PartyService } from '../services/party/party.service';
 @Component({
   selector: 'app-join-party-dialog',
   templateUrl: './join-party-dialog.component.html',
   styleUrls: ['./join-party-dialog.component.scss']
 })
 export class JoinPartyDialogComponent {
-  roomCode = new FormControl('', [Validators.required, Validators.pattern("[a-zA-Z0-9]")]);
+  roomCode = new FormControl('', [Validators.required, Validators.pattern("[a-zA-Z0-9]+")]);
   userName = new FormControl('', [Validators.required]);
 
-  constructor(
-    public dialogRef: MatDialogRef<JoinPartyDialogComponent>,
-  ) { }
+  constructor(private partyService: PartyService) { }
 
   onJoinPartyClicked() {
     if (this.getRoomCodeErrorMessage()

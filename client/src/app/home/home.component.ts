@@ -12,6 +12,7 @@ import { PartyService } from '../services/party/party.service';
 export class HomeComponent {
 
   constructor(public joinPartyDialog: MatDialog,
+    public addVideoDialog: MatDialog,
     private partyService: PartyService,
     private router: Router) { }
 

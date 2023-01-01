@@ -1,13 +1,16 @@
 import { HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { YouTubePlayerModule } from '@angular/youtube-player';
+import { AddVideoDialogComponent } from './add-video-dialog/add-video-dialog.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -25,7 +28,8 @@ import { PartySocket } from './socketio/PartySocket';
     HomeComponent,
     JoinPartyDialogComponent,
     SignInComponent,
-    RoomComponent
+    RoomComponent,
+    AddVideoDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -36,8 +40,11 @@ import { PartySocket } from './socketio/PartySocket';
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     ReactiveFormsModule,
     HttpClientModule,
+    FormsModule,
+    MatDividerModule,
   ],
   providers: [
     PartySocket,

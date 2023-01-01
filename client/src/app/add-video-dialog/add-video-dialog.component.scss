@@ -1,0 +1,22 @@
+.search-form {
+  .full-width {
+    width: 100%;
+  }
+}
+
+.video-results {
+  .video-result {
+    img {
+      width: 120px;
+      height: 90px;
+    }
+  }
+
+  .mat-divider {
+    margin: 1em 0;
+
+    &:last-child {
+      display: none;
+    }
+  }
+}

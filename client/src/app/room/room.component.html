@@ -1,1 +1,13 @@
 <p>Party {{ roomCode | async }}</p>
+
+<div class="fcol">
+  <h1>Now Playing</h1>
+  <span>now playing song...</span>
+
+  <h2>Up Next</h2>
+  <span>up next song...</span>
+
+  <button mat-raised-button color="primary" (click)="onAddSongClicked()">
+    Add a song to the playlist
+  </button>
+</div>

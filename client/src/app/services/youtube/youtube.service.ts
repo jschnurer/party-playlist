@@ -13,7 +13,7 @@ export class YoutubeService {
   constructor(public http: HttpClient,
     private config: ConfigService) { }
 
-  searchVideos(searchText: string): Observable<Object> {
+  searchVideos(searchText: string): Observable<IYoutubeSearchResult> {
     return this.http
       .get<IYoutubeSearchResult>(this.getVideoSearchUrl(searchText));
   }

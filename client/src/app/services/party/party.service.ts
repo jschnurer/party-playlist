@@ -25,8 +25,18 @@ export class PartyService {
   }
 
   addSong(roomCode: string,
-    youtubeVideo: IYoutubeVideo) {
-
+    youtubeVideo: IYoutubeVideo,
+    userName: string,
+    userUUId: string) {
+    return this.http.post(`${this.config.baseApiEndpoint}/rooms/${roomCode}/songs`, {
+      youtubeVideoId: youtubeVideo.videoId,
+      youtubeVideoTitle: youtubeVideo.title,
+    }, {
+      headers: {
+        "user_uuid": userUUId,
+        "user_name": userName,
+      },
+    });
   }
 
   playNextSong(roomCode: string) {

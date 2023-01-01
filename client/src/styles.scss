@@ -16,3 +16,35 @@ body {
   display: flex;
   gap: 1em;
 }
+
+.fullscreen-dialog {
+  align-self: stretch;
+  width: 100%;
+  max-width: 100vw !important;
+  margin: .5em;
+  box-sizing: border-box;
+
+  .mat-mdc-dialog-surface {
+    display: flex;
+
+    > * {
+      height: 100%;
+      display: grid;
+      grid-template-areas: "header" "content" "actions";
+      grid-template-rows: min-content 1fr min-content;
+    }
+
+    .mat-mdc-dialog-title {
+      grid-area: header;
+    }
+
+    .mat-mdc-dialog-content {
+      max-height: initial;
+      grid-area: content;
+    }
+
+    .mat-md-dialog-actions {
+      grid-area: actions;
+    }
+  }
+}
