@@ -18,6 +18,7 @@ export class SocketClientManagement {
 
   addMessageListener(messageListener: IMessageListener) {
     this.messageListeners.push(messageListener);
+    console.log(this.messageListeners);
   }
 
   handleMessage(data: any, socket: SocketIO.Socket) {
@@ -31,8 +32,15 @@ export class SocketClientManagement {
 
     // Set up io connections.
     this.io.on("connection", (socket) => {
+      console.log("Socket client connected.");
+
       socket.on("message", (data) => {
+        console.log("socket message received", data);
         self.handleMessage(data, socket);
+      });
+
+      socket.on('disconnect', () => {
+        console.log('user disconnected');
       });
     });
   }

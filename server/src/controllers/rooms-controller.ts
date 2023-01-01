@@ -48,6 +48,8 @@ export default function getRoomsController(socketManager: SocketClientManagement
   socketManager.addMessageListener({
     messageType: "joinRoom",
     listener: (data: any, socket: SocketIO.Socket) => {
+      console.log("SOCKET: joinRoom", data);
+      
       if (!data.roomCode) {
         socket.emit("error",
           "No roomCode specified in data.");

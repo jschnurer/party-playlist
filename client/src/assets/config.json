@@ -1,3 +1,4 @@
 {
-  "baseApiEndpoint": "#{BaseApiEndpoint}#"
+  "baseApiEndpoint": "#{BaseApiEndpoint}#",
+  "socketEndpoint": "#{SocketEndpoint}#"
 }

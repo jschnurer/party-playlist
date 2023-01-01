@@ -9,22 +9,20 @@ import IConfig from 'src/models/IConfig';
 export class ConfigService {
   config: BehaviorSubject<IConfig> = new BehaviorSubject<IConfig>({
     baseApiEndpoint: "",
+    socketEndpoint: "",
   });
 
-  constructor(private http: HttpClient) {
-    this.loadConfig();
-  }
+  constructor(private http: HttpClient) {}
 
-  private loadConfig() {
+  loadConfig() {
     const configUrl = isDevMode()
       ? '/assets/local.config.json'
       : '/assets/config.json';
 
-    this.http.get(configUrl)
-      .subscribe((envResponse: any) => {
-        const config: IConfig = { baseApiEndpoint: "" };
-        Object.assign(config, envResponse);
-        this.config.next(config);
+    return this.http.get(configUrl)
+      .toPromise()
+      .then(data => {
+        this.config.next(data as IConfig);
       });
   }
 }

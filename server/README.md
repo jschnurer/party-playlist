@@ -40,11 +40,14 @@
 
 ## Client messages (to server)
 
+All socket messages send from the client to the server must have the eventName of "message" and include a JSON data object that must contain a `type` string defining which message is being sent.
+
 ### "joinRoom"
 * Description: Joins a specific party playlist room to listen for events.
 * Required Data:
 
       {
+        type: "joinRoom",
         roomCode: string
       }
 
@@ -52,7 +55,8 @@
 * Description: Leaves a specific party playlist room.
 * Body Data:
 
-      { 
+      {
+        type: "leaveRoom",
         roomCode: string
       }
 
