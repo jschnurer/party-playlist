@@ -1,0 +1,14 @@
+@mixin flex {
+  display: flex;
+  gap: 1em;
+}
+
+.flex-col {
+  @include flex;
+  flex-flow: column;
+}
+
+.flex-row {
+  @include flex;
+  flex-flow: row;
+}

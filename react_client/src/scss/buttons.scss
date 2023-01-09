@@ -1,0 +1,25 @@
+@use "theme.scss";
+
+button,
+.button {
+  display: inline-block;
+  text-decoration: none;
+  background-color: theme.$color;
+  color: theme.$background-color;
+  text-transform: uppercase;
+  font-size: theme.$font-size;
+  border: none;
+  border-radius: theme.$padding-narrow;
+  padding: theme.$padding-narrow;
+
+  &.primary {
+    background-color: theme.$primary-color;
+    color: theme.$color;
+  }
+
+  &:hover {
+    cursor: pointer;
+    background-color: theme.$primary-color-highlight2;
+    color: theme.$background-color;
+  }
+}

@@ -1,0 +1,11 @@
+@use "theme.scss";
+
+.input-row {
+  gap: 0;
+
+  .hint {
+    font-style: italic;
+    font-size: theme.$font-size-small;
+    color: theme.$color-hint;
+  }
+}

@@ -1,0 +1,19 @@
+/** Colors **/
+$primary-color: rgb(91, 0, 156);
+$primary-color-highlight1: adjust-color(
+  $color: $primary-color,
+  $lightness: 25%,
+);
+$primary-color-highlight2: adjust-color(
+  $color: $primary-color,
+  $lightness: 50%,
+);
+$background-color: #222;
+$color: #eee;
+$color-hint: #888;
+
+/** Measurements and padding **/
+$font-size: 1em;
+$font-size-small: .75em;
+$padding: 1em;
+$padding-narrow: 0.5em;

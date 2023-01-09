@@ -1,0 +1,15 @@
+@use "theme";
+
+header {
+  background-color: indigo;
+  padding: theme.$padding-narrow;
+  font-size: larger;
+  font-weight: bold;
+  font-variant: small-caps;
+}
+
+article {
+  max-width: 900px;
+  margin: auto;
+  padding: theme.$padding;
+}
