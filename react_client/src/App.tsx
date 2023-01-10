@@ -1,19 +1,30 @@
+import { useState } from 'react';
 import './App.scss';
+import NameValidator, { NameContext } from './components/name-input/NameValidator';
 import Routing from './Routing';
 
 function App() {
-  return (
-    <div className="app">
-      <header>
-        <span>Party Playlist</span>
-      </header>
+  const [username, setUsername] = useState("");
 
-      <article>
-        <div className="page">
-          <Routing />
-        </div>
-      </article>
-    </div>
+  return (
+    <NameContext.Provider value={{
+      username: localStorage.getItem("username") || "",
+      setUsername,
+    }}>
+      <div className="app">
+        <header>
+          <span>Party Playlist</span>
+        </header>
+
+        <article>
+          <div className="page">
+            <NameValidator>
+              <Routing />
+            </NameValidator>
+          </div>
+        </article>
+      </div>
+    </NameContext.Provider>
   );
 }
 

@@ -1,4 +1,4 @@
-@use "theme.scss";
+@use "theme";
 
 $divider-color: adjust-color(theme.$background-color, $lightness: 70%);
 
@@ -10,35 +10,41 @@ $divider-color: adjust-color(theme.$background-color, $lightness: 70%);
 
 .modal {
   display: grid;
-  background-color: theme.$primary-color;
-  grid-template:
+  background-color: theme.$color-primary;
+  display: grid;
+  grid-template-areas:
     "head"
     "body"
     "foot";
   row-gap: theme.$padding-narrow;
+  grid-template-rows: min-content 1fr min-content;
 
   max-height: 95%;
   max-width: 95%;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
+  overflow-y: hidden;
   background-color: white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  color: #222;
+  color: theme.$background-color;
   box-sizing: border-box;
   border-radius: 0.25em;
-  min-width: 100px;
+  min-width: 200px;
+  min-height: 200px;
 
   .head {
     grid-area: head;
     border-bottom: 1px $divider-color solid;
     padding: theme.$padding-narrow;
+
+    &.draggable {
+      cursor: move;
+    }
   }
 
   .body {
     grid-area: body;
     padding: theme.$padding-narrow;
+    overflow-y: auto;
   }
 
   .foot {
@@ -46,5 +52,28 @@ $divider-color: adjust-color(theme.$background-color, $lightness: 70%);
     grid-area: foot;
     padding: theme.$padding-narrow;
     justify-content: flex-end;
+
+    &.corner-padding {
+      padding-bottom: theme.$padding-narrow;
+      padding-right: theme.$padding;
+    }
+
+    .corner-grip {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      cursor: nw-resize;
+    }
   }
+}
+
+.modal-portal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  margin: theme.$padding;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }

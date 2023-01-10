@@ -1,4 +1,4 @@
-@use "theme.scss";
+@use "theme";
 
 button,
 .button {
@@ -13,13 +13,13 @@ button,
   padding: theme.$padding-narrow;
 
   &.primary {
-    background-color: theme.$primary-color;
+    background-color: theme.$color-primary;
     color: theme.$color;
   }
 
   &:hover {
     cursor: pointer;
-    background-color: theme.$primary-color-highlight2;
+    background-color: theme.$color-primary-highlight2;
     color: theme.$background-color;
   }
 }

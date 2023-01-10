@@ -1,0 +1,8 @@
+@use "theme";
+
+hr {
+  height: 1px;
+  border: none;
+  background-color: theme.$color;
+  width: 100%;
+}

@@ -1,7 +1,11 @@
-@use "theme.scss";
+@use "theme";
 
 .input-row {
   gap: 0;
+
+  .required {
+    color: theme.$color-required;
+  }
 
   .hint {
     font-style: italic;

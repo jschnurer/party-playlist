@@ -1,14 +1,28 @@
+@use "theme";
+
 @mixin flex {
   display: flex;
-  gap: 1em;
+  gap: theme.$padding;
 }
 
 .flex-col {
   @include flex;
-  flex-flow: column;
+  flex-direction: column;
+}
+
+.flex-col-narrow {
+  @include flex;
+  gap: theme.$padding-narrow;
+  flex-direction: column;
 }
 
 .flex-row {
   @include flex;
-  flex-flow: row;
+  flex-direction: row;
+}
+
+.flex-row {
+  @include flex;
+  gap: theme.$padding-narrow;
+  flex-direction: row;
 }

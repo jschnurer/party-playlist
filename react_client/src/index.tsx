@@ -10,7 +10,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <PortalContext.Provider
-      value={document.getElementById('portal')}
+      value={document.getElementById('portal') as HTMLDivElement}
     >
       <App />
     </PortalContext.Provider>

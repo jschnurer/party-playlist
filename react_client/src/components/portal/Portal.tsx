@@ -40,8 +40,7 @@ const Portal: React.FC<IPortalProps> = ({
   }
 };
 
-const PortalContext = React.createContext<HTMLElement | null>(null);
+const PortalContext = React.createContext<HTMLDivElement | null>(null);
 
 export default Portal;
 export { PortalContext };
-

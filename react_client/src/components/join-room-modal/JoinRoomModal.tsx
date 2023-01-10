@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import TextInput from "../inputs/TextInput";
 import Modal from "../modal/Modal";
-import "./JoinRoomModal.scoped.scss";
 
 interface IJoinRoomModalProps {
   onClose(): void,
@@ -23,25 +22,28 @@ const JoinRoomModal: React.FC<IJoinRoomModalProps> = ({
 
   return (
     <Modal
+      initialMaxWidth={300}
+      allowDrag
+      allowResize
       head="Join Party Room"
       body={
-        <form className="join-room-form flex-col">
+        <form className="flex-col join-room-form" onSubmit={onSubmit}>
           <TextInput
             label="Room Code"
             isRequired
+            value={roomCode}
             onChange={val => setRoomCode(val)}
             placeholder="Room code..."
             hint="The code of the room to join. Ask the host for this!"
-            value={roomCode}
           />
 
           <TextInput
             label="Your Name"
             isRequired
+            value={userName}
             onChange={val => setUserName(val)}
             placeholder="Your name..."
             hint="The name you'd like to be known as while in the party room. When your songs play, this will be the name shown to everyone else in the room."
-            value={userName}
           />
         </form>
       }

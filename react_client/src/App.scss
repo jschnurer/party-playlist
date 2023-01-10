@@ -1,7 +1,7 @@
 @use "theme";
 
 header {
-  background-color: indigo;
+  background-color: theme.$color-primary;
   padding: theme.$padding-narrow;
   font-size: larger;
   font-weight: bold;

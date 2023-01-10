@@ -9,7 +9,9 @@ import IController from "models/controllers/IController";
 import { resolve } from "path";
 import settings from "settings";
 import { SocketClientManagement } from "socketio/SocketClientManagement";
+import ApiError from "validation/ApiError";
 import errorHandler from "validation/errorHandler";
+import ErrorTypes from "validation/ErrorTypes";
 
 export const app = express();
 const port = settings.httpPort;
@@ -24,44 +26,21 @@ app.use(cors());
 app.use(staticApp(resolve("./") + "/clientApp"));
 app.use(json());
 
-app.use("*", (_, res, next) => {
+app.use("*", (req, res, next) => {
+  // Check to ensure the request contains the username header.
+  const username = req.header("username") || "";
+
+  if (!username?.trim()) {
+    throw new ApiError("The required header `username` was not provided.",
+      ErrorTypes.Unauthorized);
+  }
+
+  // Save the socketServer and username for later use by controllers.
   res.locals.socketServer = socketServer;
+  res.locals.username = username;
+
   next();
 });
-
-// // Check token unless it's the login route.
-// app.use("*", expressAsyncHandler(async (req, res, next) => {
-//   const ix = exposedRoutes.indexOf(req.baseUrl.toLowerCase());
-//   const isExposedRoute = ix !== -1
-//     || (!req.baseUrl.toLowerCase().startsWith("/api")
-//       && !req.baseUrl.toLowerCase().startsWith("/static"))
-
-//   if (!isExposedRoute) {
-//     const authHeader = req.header("authorization") || "";
-
-//     // Require authentication key for all requests other than logging in.
-//     if (!authHeader.trim()
-//       || authHeader.indexOf("Bearer ") !== 0) {
-//       throw new ApiError("Unauthorized.", ErrorTypes.Unauthorized);
-//     }
-
-//     const token = authHeader.substring("Bearer ".length);
-
-//     const user = await getUserFromToken(token);
-
-//     if (!user) {
-//       throw new ApiError("Unauthorized.", ErrorTypes.Unauthorized);
-//     }
-
-//     // Provide the current user to all routes.
-//     res.locals.user = user;
-
-//     // Provide the socket server to all routers.
-//     res.locals.socketServer = socketServer;
-//   }
-
-//   next();
-// }));
 
 // Set up all the routers.
 useRouter(getRoomsController(socketServer));

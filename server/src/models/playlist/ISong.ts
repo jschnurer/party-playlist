@@ -1,8 +1,7 @@
 export default interface ISong {
   youtubeVideoId: string,
   title: string,
-  contributedByUUId: string,
-  contributorHandle: string,
+  contributor: string,
   wasPlayed: boolean,
   addedTimestamp: Date,
 }

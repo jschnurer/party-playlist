@@ -1,4 +1,3 @@
-import { getUserInfoFromRequest } from "authentication/authentication";
 import express, { Request } from "express";
 import IController from "models/controllers/IController";
 import RoomDb from "roomDb";
@@ -13,10 +12,6 @@ export default function getSongsController(): IController {
 
   // Add a song to the playlist
   controller.router.post("/:roomCode/songs", (req: Request, res) => {
-    const user = getUserInfoFromRequest(req);
-
-    console.log(req.params);
-
     const roomCode = req.params.roomCode?.toUpperCase();
     const room = RoomDb.Instance.getRoom(roomCode);
 
@@ -38,8 +33,7 @@ export default function getSongsController(): IController {
     // Add the song to the room. The room will handle informing everyone.
     room.addSong({
       addedTimestamp: new Date(),
-      contributedByUUId: user.uuid,
-      contributorHandle: user.name,
+      contributor: res.locals.username,
       wasPlayed: false,
       youtubeVideoId: videoId,
       title: videoTitle,
@@ -53,7 +47,6 @@ export default function getSongsController(): IController {
 
   // Used by the owner to skip to the next song (or when current song finishes).
   controller.router.post("/:roomCode/songs/playNext", (req, res) => {
-    const user = getUserInfoFromRequest(req);
     const roomCode = req.params.roomCode?.toUpperCase();
     const room = RoomDb.Instance.getRoom(roomCode);
 
@@ -61,7 +54,7 @@ export default function getSongsController(): IController {
       throw new ApiError(`Room '${roomCode}' not found.`, ErrorTypes.NotFound);
     }
 
-    if (user.uuid !== room.getOwnerUUId()) {
+    if (res.locals.username !== room.getOwner()) {
       throw new ApiError(`Only the owner of the room can skip to the next song.`, ErrorTypes.Forbidden);
     }
 

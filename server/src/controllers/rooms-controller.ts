@@ -1,4 +1,3 @@
-import { getNewUserUUId } from "authentication/authentication";
 import express from "express";
 import IController from "models/controllers/IController";
 import RoomDb from "roomDb";
@@ -15,19 +14,17 @@ export default function getRoomsController(socketManager: SocketClientManagement
 
   // Creates a new room.
   controller.router.post("", (_, res) => {
-    const creatorUUId = getNewUserUUId();
-
-    const newRoom = RoomDb.Instance.createNewRoom(creatorUUId,
+    const newRoom = RoomDb.Instance.createNewRoom(
+      res.locals.username,
       res.locals.socketServer);
 
     res.status(201).json({
       roomCode: newRoom.getRoomCode(),
-      yourUUID: creatorUUId,
     });
   });
 
-  // Attempt to join a room.
-  controller.router.post("/:roomCode/join", (req, res) => {
+  // Check if a room exists.
+  controller.router.get("/:roomCode", (req, res) => {
     const roomCode = req.params.roomCode?.toUpperCase();
 
     const room = RoomDb.Instance.getRoom(roomCode);
@@ -36,11 +33,8 @@ export default function getRoomsController(socketManager: SocketClientManagement
       throw new ApiError(`Room '${roomCode}' not found.`, ErrorTypes.NotFound);
     }
 
-    const userUUId = getNewUserUUId();
-
     res.status(200).json({
       roomCode: roomCode,
-      yourUUID: userUUId,
     });
   });
 

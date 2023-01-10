@@ -1,5 +1,5 @@
 import React from "react";
-import "./TextInput.scoped.scss";
+import "./TextInput.scss";
 
 interface ITextInputProps {
   label?: string,
@@ -19,8 +19,13 @@ const TextInput: React.FC<ITextInputProps> = ({
   hint,
 }) => {
   return (
-    <div className="input-row flex-col">
-      <label>{label}{isRequired ? "*" : ""}</label>
+    <div className="input-row flex-col-narrow">
+      <label>
+        {label}
+        {isRequired &&
+          <span className="required">*</span>
+        }
+      </label>
       <input
         type="text"
         placeholder={placeholder}

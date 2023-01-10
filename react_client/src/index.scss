@@ -1,6 +1,7 @@
-@use "theme.scss";
-@use "scss/buttons.scss";
-@use "scss/flex.scss";
+@use "theme";
+@use "scss/buttons";
+@use "scss/flex";
+@use "scss/hr";
 
 body {
   margin: 0;
@@ -19,16 +20,10 @@ code {
     monospace;
 }
 
-.modal-portal {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  display: flex;
-  margin: 1em;
-  align-content: center;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+.no-text-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }

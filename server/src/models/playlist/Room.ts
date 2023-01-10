@@ -9,18 +9,18 @@ export default class Room {
   /** The song currently playing. */
   private currentSong: ISong | undefined;
   /** The uuid of the room owner. */
-  private ownerUUId: string;
+  private owner: string;
   /** The socket.io server. */
   private socketServer: SocketClientManagement;
 
   constructor(properties: IPlaylistConstructorArgs) {
     this.roomCode = properties.roomCode;
-    this.ownerUUId = properties.ownerUUId;
+    this.owner = properties.ownerUUId;
     this.socketServer = properties.socketServer;
   }
 
-  getOwnerUUId() {
-    return this.ownerUUId;
+  getOwner() {
+    return this.owner;
   }
 
   getRoomCode() {
@@ -32,20 +32,23 @@ export default class Room {
   }
 
   getNextSong(): ISong | undefined {
-    const contributorUUIDs = Array.from(new Set(this.songs.map(x => x.contributedByUUId)));
+    const contributors = Array.from(new Set(this.songs.map(x => x.contributor)));
 
     const currSongId = this.currentSong?.youtubeVideoId;
 
     // Get the following info for each contributor:
     //  * The number of this person's songs that have been played.
     //  * The next song suggestion contributed by this person.
-    const contributionInfo = contributorUUIDs.map(contributorUUID => {
-      const contributedSongs = this.songs.filter(x => x.contributedByUUId === contributorUUID);
-      const nextSuggestion = contributedSongs.filter(x => !x.wasPlayed && x.youtubeVideoId !== currSongId)?.[0];
+    const contributionInfo = contributors.map(contributor => {
+      const contributedSongs = this.songs.filter(x => x.contributor === contributor);
+      const nextSuggestion = contributedSongs
+        .filter(x => !x.wasPlayed && x.youtubeVideoId !== currSongId)
+        .sort((a, b) => a.addedTimestamp < b.addedTimestamp ? -1 : 1)
+        ?.[0];
 
       return {
-        contributorUUID,
-        numPlayed: contributedSongs.filter(x => x.wasPlayed).length,
+        contributor,
+        numPlayed: contributedSongs.filter(x => x.wasPlayed || x.youtubeVideoId === currSongId).length,
         nextSuggestion: nextSuggestion,
       };
     }).filter(x => x.nextSuggestion);
@@ -87,14 +90,15 @@ export default class Room {
       return undefined;
     }
 
-    // Find the next song by someone other that the contributor of the current song.
+    // Find the next song by someone other than the contributor of the current song.
     const nextByNotCurrentUser = contributionInfo
-      .filter(x => x.contributorUUID !== this.getCurrentSong()?.contributedByUUId)
-      ?.[0]?.nextSuggestion;
+      .filter(x => x.contributor !== this.getCurrentSong()?.contributor
+        && x.nextSuggestion)
+      ?.[0]?.nextSuggestion
+      // If none is found, fine the next person with a suggestion instead.
+      || contributionInfo.filter(x => x.nextSuggestion)?.[0]?.nextSuggestion;
 
-    // Return the next non-current-user's song or, if there is no one, the next
-    // song by anyone.
-    return nextByNotCurrentUser ?? contributionInfo[0].nextSuggestion;
+    return nextByNotCurrentUser;
   }
 
   addSong(song: ISong) {
