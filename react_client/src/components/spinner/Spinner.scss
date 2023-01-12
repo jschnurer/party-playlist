@@ -1,0 +1,17 @@
+@use "theme";
+
+.spinner_container {
+  transform: scale(4);
+}
+
+.spinner_0XTQ {
+  transform-origin: center;
+  animation: spinner_y6GP .75s linear infinite;
+  fill: theme.$color-primary;
+}
+
+@keyframes spinner_y6GP {
+  100% {
+    transform: rotate(360deg)
+  }
+}

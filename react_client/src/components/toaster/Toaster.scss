@@ -1,0 +1,13 @@
+@use "theme";
+
+.toaster {
+  position: fixed;
+  bottom: theme.$padding;
+  left: 50%;
+  display: flex;
+  flex-flow: column-reverse;
+  align-items: center;
+  justify-content: flex-start;
+  gap: theme.$padding;
+  width: 0;
+}

@@ -1,0 +1,29 @@
+@use "theme";
+
+.toast {
+  color: black;
+  padding: theme.$padding-narrow;
+  width: 300px;
+
+  &.error {
+    background-color: rgb(255, 144, 144);
+  }
+
+  &.success {
+    background-color: rgb(144, 255, 144);
+  }
+
+  animation: fade-away 3s ease-out;
+}
+
+@keyframes fade-away {
+  0% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useRef, useState } from "react";
+import RoomApi from "../../api/RoomApi";
 import TextInput from "../inputs/TextInput";
 import Modal from "../modal/Modal";
+import { RequestorContext } from "../requestor/Requestor";
+import { ToasterContext } from "../toaster/Toaster";
 
 interface IJoinRoomModalProps {
   onClose(): void,
@@ -9,15 +12,23 @@ interface IJoinRoomModalProps {
 const JoinRoomModal: React.FC<IJoinRoomModalProps> = ({
   onClose,
 }) => {
+  const requestor = useContext(RequestorContext);
+  const formRef = useRef<HTMLFormElement>(null);
   const [roomCode, setRoomCode] = useState<string>("");
-  const [userName, setUserName] = useState<string>("");
+  const toaster = useContext(ToasterContext);
 
-  const onSubmit = () => {
-    if (!userName.trim()
-      || !roomCode.trim()) {
-      alert("You're missing something important...");
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!roomCode.trim()) {
+      toaster?.showToast({
+        message: "What room do you want to join?",
+        type: "error",
+      });
       return;
     }
+
+    await requestor?.trackRequest(RoomApi.checkRoomExists(roomCode.trim()));
   };
 
   return (
@@ -27,7 +38,11 @@ const JoinRoomModal: React.FC<IJoinRoomModalProps> = ({
       allowResize
       head="Join Party Room"
       body={
-        <form className="flex-col join-room-form" onSubmit={onSubmit}>
+        <form
+          className="flex-col join-room-form"
+          onSubmit={onSubmit}
+          ref={formRef}
+        >
           <TextInput
             label="Room Code"
             isRequired
@@ -35,22 +50,19 @@ const JoinRoomModal: React.FC<IJoinRoomModalProps> = ({
             onChange={val => setRoomCode(val)}
             placeholder="Room code..."
             hint="The code of the room to join. Ask the host for this!"
-          />
-
-          <TextInput
-            label="Your Name"
-            isRequired
-            value={userName}
-            onChange={val => setUserName(val)}
-            placeholder="Your name..."
-            hint="The name you'd like to be known as while in the party room. When your songs play, this will be the name shown to everyone else in the room."
+            maxLength={5}
           />
         </form>
       }
       foot={
         <>
           <button onClick={onClose}>cancel</button>
-          <button onClick={onSubmit} className="primary">Okay!</button>
+          <button
+            onClick={() => formRef.current?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
+            className="primary"
+          >
+            Okay!
+          </button>
         </>
       }
     />

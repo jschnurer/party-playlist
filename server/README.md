@@ -1,21 +1,21 @@
 # API Endpoints
 
 #### POST /rooms
-* Description: creates a new room, returns its Code and the creator's UUId for that room.
+* Description: creates a new room, returns the new Code for that room.
+* Response Code: HTTP201
 * Response Body:
 
       {
         roomCode: string,
-        yourUUID: string
       }
 
-#### POST /rooms/:roomCode/join
-* Description: checks for room existence, returns its Code and the current user's UUId for that room.
+#### GET /rooms/:roomCode
+* Description: checks for room existence, returns its Code if it exists.
+* Response Code: HTTP200
 * Response Body:
 
       {
         roomCode: string,
-        yourUUID: string
       }
 
 #### POST /rooms/:roomCode/songs

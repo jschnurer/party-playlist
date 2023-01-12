@@ -8,6 +8,7 @@ interface ITextInputProps {
   isRequired?: boolean,
   placeholder?: string,
   hint?: string,
+  maxLength?: number,
 }
 
 const TextInput: React.FC<ITextInputProps> = ({
@@ -17,6 +18,7 @@ const TextInput: React.FC<ITextInputProps> = ({
   isRequired = false,
   placeholder,
   hint,
+  maxLength,
 }) => {
   return (
     <div className="input-row flex-col-narrow">
@@ -29,9 +31,10 @@ const TextInput: React.FC<ITextInputProps> = ({
       <input
         type="text"
         placeholder={placeholder}
-        required={true}
+        required={isRequired}
         value={value}
         onChange={e => onChange(e.currentTarget.value)}
+        maxLength={maxLength}
       />
       {!!hint &&
         <span className="hint">
