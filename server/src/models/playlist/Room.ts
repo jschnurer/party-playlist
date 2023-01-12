@@ -1,3 +1,4 @@
+import * as SocketIO from "socket.io";
 import { SocketClientManagement } from "socketio/SocketClientManagement";
 import ISong from "./ISong";
 
@@ -127,16 +128,21 @@ export default class Room {
     return nextSong;
   }
 
-  emitSocketInfo() {
+  emitSocketInfo(individualRecipient?: SocketIO.Socket) {
     const songInfo = {
-      now_playing: this.getCurrentSong()?.title,
-      next_up: this.getNextSong()?.title,
+      now_playing: this.getCurrentSong()?.title || "NOTHING",
+      next_up: this.getNextSong()?.title || "NOTHING",
     };
 
-    this.socketServer
-      .io
-      .to(`ROOM_${this.roomCode}`)
-      .emit("songInfo", songInfo);
+    if (individualRecipient) {
+      individualRecipient
+        .emit("songInfo", songInfo);
+    } else {
+      this.socketServer
+        .io
+        .to(`ROOM_${this.roomCode}`)
+        .emit("songInfo", songInfo);
+    }
 
     console.debug(`Emitted ${JSON.stringify(songInfo)} to ROOM_${this.roomCode}.`);
   }

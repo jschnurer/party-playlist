@@ -1,0 +1,20 @@
+@use "theme";
+
+.youtube-search-result-item {
+  padding: theme.$padding-narrow;
+  padding-bottom: theme.$padding;
+  border-bottom: 1px theme.$background-color solid;
+
+  h4 {
+    margin-top: 0;
+  }
+
+  > div {
+    align-items: center;
+  }
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: none;
+  }
+}

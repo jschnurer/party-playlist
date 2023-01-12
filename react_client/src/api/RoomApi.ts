@@ -1,4 +1,5 @@
 import { apiGetJson, apiPostJson, getApiUrl, throwIfResponseError } from "../utilities/apiUtilities";
+import IAddVideoRequest from "./types/IAddVideoRequest";
 import IRoomExistenceResponse from "./types/IRoomExistenceResponse";
 
 class RoomApi {
@@ -19,6 +20,12 @@ class RoomApi {
     await throwIfResponseError(response);
 
     return (await response.json())?.roomCode;
+  }
+
+  async addVideo(roomCode: string, video: IAddVideoRequest, abortSignal?: AbortSignal): Promise<void> {
+    const response = await apiPostJson(getApiUrl(`/rooms/${roomCode}/songs`), video, abortSignal);
+
+    await throwIfResponseError(response);
   }
 }
 

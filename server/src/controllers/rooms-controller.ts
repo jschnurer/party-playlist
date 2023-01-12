@@ -41,17 +41,28 @@ export default function getRoomsController(socketManager: SocketClientManagement
   // Set up the socket io functionality.
   socketManager.addMessageListener({
     messageType: "joinRoom",
-    listener: (data: any, socket: SocketIO.Socket) => {
+    listener: (data: { roomCode?: string }, socket: SocketIO.Socket) => {
       console.log("SOCKET: joinRoom", data);
-      
+
       if (!data.roomCode) {
+        console.log("joinRoom: No roomCode specified!");
         socket.emit("error",
           "No roomCode specified in data.");
         return;
       }
 
-      // Join the room.
-      socket.join(`ROOM_${data.roomCode}`);
+      const room = RoomDb.Instance.getRoom(data.roomCode);
+
+      if (!room) {
+        console.log(`joinRoom: Room ${data.roomCode} not found.`);
+        socket.emit("error", `Room ${data.roomCode} not found.`);
+        return;
+      } else {
+        // Join the room.
+        socket.join(`ROOM_${data.roomCode}`);
+
+        room.emitSocketInfo(socket);
+      }
     },
   });
 

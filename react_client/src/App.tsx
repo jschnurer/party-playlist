@@ -25,11 +25,10 @@ function App() {
         const errMessage = getResponseErrorMessage(err);
         showToast({
           message: errMessage,
-          timestamp: new Date().getTime(),
           type: "error",
         });
       }).finally(() => {
-        setOngoingRequests(ongoingRequests.filter(savedRequest => savedRequest !== request));
+        setOngoingRequests(req => req.filter(savedRequest => savedRequest !== request));
       });
 
     return request;

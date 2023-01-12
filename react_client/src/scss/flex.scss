@@ -21,8 +21,8 @@
   flex-direction: row;
 }
 
-.flex-row {
+.flex-row-narrow {
   @include flex;
-  gap: theme.$padding-narrow;
   flex-direction: row;
+  gap: theme.$padding-narrow;
 }

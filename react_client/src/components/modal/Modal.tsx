@@ -12,6 +12,8 @@ interface IModalProps {
   foot: React.ReactNode,
   /** The initial max width of the modal before the user resizes it (if applicable). */
   initialMaxWidth?: number,
+  /** The initial width of the modal before the user resizes it (if applicable). */
+  initialWidth?: number,
   /** Allows the modal to be resized by the user by clicking and dragging the bottom right corner of the modal. */
   allowResize?: boolean,
   /** Allows the modal to be moved around the screen by clicking and dragging anywhere in the header. */
@@ -143,9 +145,11 @@ const Modal: React.FC<IModalProps> = (props) => {
         ref={modalRef}
         onMouseMove={getOptionalMouseEvent(onMouseMove)}
         onMouseUp={getOptionalMouseEvent(onMouseUp)}
-        style={props.initialMaxWidth
-          ? { maxWidth: props.initialMaxWidth }
-          : undefined
+        style={props.initialMaxWidth || props.initialWidth
+          ? {
+            maxWidth: props.initialMaxWidth,
+            width: props.initialWidth,
+          } : undefined
         }
       >
         <div
