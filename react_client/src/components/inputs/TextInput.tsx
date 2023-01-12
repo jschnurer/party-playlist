@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import "./TextInput.scss";
 
 interface ITextInputProps {
@@ -9,6 +9,7 @@ interface ITextInputProps {
   placeholder?: string,
   hint?: string,
   maxLength?: number,
+  autoFocus?: boolean,
 }
 
 const TextInput: React.FC<ITextInputProps> = ({
@@ -19,7 +20,16 @@ const TextInput: React.FC<ITextInputProps> = ({
   placeholder,
   hint,
   maxLength,
+  autoFocus,
 }) => {
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (autoFocus) {
+      ref.current?.focus();
+    }
+  }, [autoFocus, ref]);
+
   return (
     <div className="input-row flex-col-narrow">
       <label>
@@ -29,12 +39,14 @@ const TextInput: React.FC<ITextInputProps> = ({
         }
       </label>
       <input
+        ref={ref}
         type="text"
         placeholder={placeholder}
         required={isRequired}
         value={value}
         onChange={e => onChange(e.currentTarget.value)}
         maxLength={maxLength}
+        autoFocus={autoFocus}
       />
       {!!hint &&
         <span className="hint">

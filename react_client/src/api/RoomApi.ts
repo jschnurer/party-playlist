@@ -1,4 +1,4 @@
-import { apiGetJson, getApiUrl, throwIfResponseError } from "../utilities/apiUtilities";
+import { apiGetJson, apiPostJson, getApiUrl, throwIfResponseError } from "../utilities/apiUtilities";
 import IRoomExistenceResponse from "./types/IRoomExistenceResponse";
 
 class RoomApi {
@@ -11,6 +11,14 @@ class RoomApi {
       roomCode,
       exists: true,
     };
+  }
+
+  async createRoom(abortSignal?: AbortSignal): Promise<string> {
+    const response = await apiPostJson(getApiUrl("/rooms"), abortSignal);
+
+    await throwIfResponseError(response);
+
+    return (await response.json())?.roomCode;
   }
 }
 

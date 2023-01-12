@@ -1,4 +1,5 @@
 import React, { useContext, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import RoomApi from "../../api/RoomApi";
 import TextInput from "../inputs/TextInput";
 import Modal from "../modal/Modal";
@@ -16,6 +17,7 @@ const JoinRoomModal: React.FC<IJoinRoomModalProps> = ({
   const formRef = useRef<HTMLFormElement>(null);
   const [roomCode, setRoomCode] = useState<string>("");
   const toaster = useContext(ToasterContext);
+  const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,7 +30,11 @@ const JoinRoomModal: React.FC<IJoinRoomModalProps> = ({
       return;
     }
 
-    await requestor?.trackRequest(RoomApi.checkRoomExists(roomCode.trim()));
+    const existence = await requestor?.trackRequest(RoomApi.checkRoomExists(roomCode.trim()));
+
+    if (existence?.exists) {
+      navigate(`/room/${existence.roomCode}`);
+    }
   };
 
   return (
@@ -51,6 +57,7 @@ const JoinRoomModal: React.FC<IJoinRoomModalProps> = ({
             placeholder="Room code..."
             hint="The code of the room to join. Ask the host for this!"
             maxLength={5}
+            autoFocus
           />
         </form>
       }
