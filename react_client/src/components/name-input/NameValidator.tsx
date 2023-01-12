@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import TextInput from "../inputs/TextInput";
+import { ToasterContext } from "../toaster/Toaster";
 
 interface INameValidatorProps {
   children: React.ReactNode,
@@ -8,6 +9,7 @@ interface INameValidatorProps {
 const NameValidator: React.FC<INameValidatorProps> = ({ children }) => {
   const nameState = useContext(NameContext);
   const [localName, setLocalName] = useState(nameState?.username || "");
+  const toaster = useContext(ToasterContext);
 
   if (!nameState?.username) {
     const submitName = (e: React.FormEvent<HTMLFormElement>) => {
@@ -16,8 +18,11 @@ const NameValidator: React.FC<INameValidatorProps> = ({ children }) => {
       const parsedInput = localName.replaceAll(/[^a-zA-Z0-9 \-_]/g, "");
 
       if (parsedInput.trim().length <= 1) {
-        alert("Fake ID? Nice try. Give me a valid name that's at least 2 letters long and contains only letters and numbers.");
-        return;
+        toaster?.showToast({
+          message: "Your name is required.",
+          type: "error"
+        });
+        return false;
       }
 
       nameState?.setUsername(parsedInput);
