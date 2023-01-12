@@ -129,9 +129,13 @@ export default class Room {
   }
 
   emitSocketInfo(individualRecipient?: SocketIO.Socket) {
+    const currentSong = this.getCurrentSong();
+    const nextSong = this.getNextSong();
+
     const songInfo = {
-      now_playing: this.getCurrentSong()?.title || "NOTHING",
-      next_up: this.getNextSong()?.title || "NOTHING",
+      nowPlaying: currentSong,
+      nextUp: nextSong,
+      roomOwner: this.getOwner(),
     };
 
     if (individualRecipient) {

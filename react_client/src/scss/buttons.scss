@@ -12,12 +12,22 @@ button,
   border-radius: theme.$padding-narrow;
   padding: theme.$padding-narrow;
 
+  &:disabled {
+    background-color: adjust-color($color: theme.$color, $lightness: -50%);
+    color: adjust-color($color: theme.$background-color, $lightness: 50%);
+  }
+
   &.primary {
     background-color: theme.$color-primary;
     color: theme.$color;
+
+    &:disabled {
+      background-color: adjust-color($color: theme.$color-primary, $saturation: -75%);
+      color: adjust-color($color: theme.$color-primary, $saturation: -90%, $lightness: 25%);
+    }
   }
 
-  &:hover {
+  &:hover:not(:disabled) {
     cursor: pointer;
     background-color: theme.$color-primary-highlight2;
     color: theme.$background-color;

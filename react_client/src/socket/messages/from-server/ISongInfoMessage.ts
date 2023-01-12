@@ -1,4 +1,7 @@
+import ISong from "../../../components/room/ISong";
+
 export default interface ISongInfoMessage {
-  now_playing?: string,
-  next_up?: string,
+  nowPlaying?: ISong,
+  nextUp?: ISong,
+  roomOwner?: string,
 }

@@ -1,4 +1,7 @@
+import ISong from "./ISong";
+
 export default interface IPlaylistState {
-  nowPlaying: string,
-  nextUp: string,
+  nowPlaying?: ISong,
+  nextUp?: ISong,
+  roomOwner: string,
 }
