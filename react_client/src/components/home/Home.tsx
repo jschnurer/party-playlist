@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import JoinRoomModal from "../join-room-modal/JoinRoomModal";
 
 const Home: React.FC = () => {
-  const [isJoinRoomOpen, setIsJoinRoomOpen] = useState(true);
+  const [isJoinRoomOpen, setIsJoinRoomOpen] = useState(false);
 
   return (
     <div className="flex-col" style={{ textAlign: "center", alignItems: "center" }}>
