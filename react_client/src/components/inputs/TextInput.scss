@@ -3,6 +3,10 @@
 .input-row {
   gap: 0;
 
+  input[type="text"] {
+    padding: theme.$padding-narrow;
+  }
+
   .required {
     color: theme.$color-required;
   }

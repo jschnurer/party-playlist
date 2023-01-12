@@ -4,12 +4,17 @@ import NameValidator, { NameContext } from './components/name-input/NameValidato
 import Routing from './Routing';
 
 function App() {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(localStorage.getItem("username") || "");
+
+  const onUserNameChange = (newName: string) => {
+    setUsername(newName);
+    localStorage.setItem("username", newName);
+  };
 
   return (
     <NameContext.Provider value={{
-      username: localStorage.getItem("username") || "",
-      setUsername,
+      username,
+      setUsername: onUserNameChange,
     }}>
       <div className="app">
         <header>
