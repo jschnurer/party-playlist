@@ -6,6 +6,13 @@ header {
   font-size: larger;
   font-weight: bold;
   font-variant: small-caps;
+  display: flex;
+  justify-content: space-between;
+
+  .username {
+    cursor: pointer;
+    font-variant: normal;
+  }
 }
 
 article {

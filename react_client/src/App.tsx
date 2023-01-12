@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './App.scss';
-import NameValidator, { NameContext } from './components/name-input/NameValidator';
+import NameValidator, { getValidatedName, NameContext } from './components/name-input/NameValidator';
 import Requestor, { RequestorContext } from './components/requestor/Requestor';
 import IToast from './components/toaster/toast/IToast';
 import Toaster, { ToasterContext } from './components/toaster/Toaster';
@@ -40,13 +40,33 @@ function App() {
       ...toast,
       timestamp: new Date().getTime(),
     };
-    
+
     setToasts([...toasts, toastWithTimestamp]);
 
     window.setTimeout(() => {
       setToasts(currentToasts => currentToasts.filter(x => x !== toastWithTimestamp));
     }, 3000);
   }
+
+  const onUsernameClick = () => {
+    const input = window.prompt("What do you want your new name to be?", "");
+
+    if (!input?.trim()) {
+      return;
+    }
+
+    const newName = getValidatedName(input);
+
+    if (!newName) {
+      showToast({
+        message: "Your name is required and can contain only letters, numbers, dash, and underscore.",
+        type: "error"
+      });
+      return false;
+    }
+
+    onUserNameChange(newName);
+  };
 
   return (
     <ToasterContext.Provider
@@ -67,6 +87,9 @@ function App() {
           <div className="app">
             <header>
               <span>Party Playlist</span>
+              <span className="username" onClick={onUsernameClick}>
+                {username}
+              </span>
             </header>
 
             <article>

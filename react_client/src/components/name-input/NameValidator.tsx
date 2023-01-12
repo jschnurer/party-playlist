@@ -15,17 +15,17 @@ const NameValidator: React.FC<INameValidatorProps> = ({ children }) => {
     const submitName = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      const parsedInput = localName.replaceAll(/[^a-zA-Z0-9 \-_]/g, "");
-
-      if (parsedInput.trim().length <= 1) {
+      const newName = getValidatedName(localName);
+      
+      if (!newName) {
         toaster?.showToast({
-          message: "Your name is required.",
+          message: "Your name is required and can contain only letters, numbers, dash, and underscore.",
           type: "error"
         });
         return false;
       }
 
-      nameState?.setUsername(parsedInput);
+      nameState?.setUsername(newName);
     };
 
     return (
@@ -76,3 +76,9 @@ const NameContext = React.createContext<{
 } | null>(null);
 export { NameContext };
 
+export function getValidatedName(name: string) {
+  const parsedInput = name.replaceAll(/[^a-zA-Z0-9 \-_]/g, "");
+  return parsedInput.trim().length > 1
+    ? parsedInput
+    : undefined;
+}
