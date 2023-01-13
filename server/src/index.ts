@@ -27,17 +27,19 @@ app.use(staticApp(resolve("./") + "/clientApp"));
 app.use(json());
 
 app.use("*", (req, res, next) => {
-  // Check to ensure the request contains the username header.
-  const username = req.header("username") || "";
+  if (req.baseUrl.toLowerCase().indexOf("/api") === 0) {
+    // Check to ensure the request contains the username header.
+    const username = req.header("username") || "";
 
-  if (!username?.trim()) {
-    throw new ApiError("The required header `username` was not provided.",
-      ErrorTypes.Unauthorized);
+    if (!username?.trim()) {
+      throw new ApiError("The required header `username` was not provided.",
+        ErrorTypes.Unauthorized);
+    }
+
+    // Save the socketServer and username for later use by controllers.
+    res.locals.socketServer = socketServer;
+    res.locals.username = username;
   }
-
-  // Save the socketServer and username for later use by controllers.
-  res.locals.socketServer = socketServer;
-  res.locals.username = username;
 
   next();
 });
@@ -57,9 +59,9 @@ app.get("*", (req, res, next) => {
 app.get("*", (req: Request, res: Response) => {
   // If file exists, return it.
   try {
-    const getPath = resolve("./clientApp") + req.url.replace("..", "");
-    if (fs.existsSync(getPath)) {
-      res.sendFile(getPath);
+    const requestedPath = resolve("./clientApp") + req.url.replace("..", "");
+    if (fs.existsSync(requestedPath)) {
+      res.sendFile(requestedPath);
       return;
     }
   } catch (err) {
@@ -74,9 +76,13 @@ app.get("*", (req: Request, res: Response) => {
 app.use(errorHandler as any);
 
 httpServer.listen(port, () => {
-  console.log(`server started at http://localhost:${port}`);
+  console.log(`server started on ${port}`);
 });
 
 function useRouter({ baseRoute, router }: IController) {
-  app.use("/api" + baseRoute, router);
+  app.use(getPath("/api" + baseRoute), router);
+}
+
+function getPath(path: string) {
+  return path;
 }

@@ -65,6 +65,8 @@ class RoomDb {
       socketServer,
     });
 
+    console.log(`Room ${roomCode} created!`);
+
     return this.rooms[roomCode];
   }
 

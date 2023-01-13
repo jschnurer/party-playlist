@@ -5,6 +5,7 @@ import Requestor, { RequestorContext } from './components/requestor/Requestor';
 import IToast from './components/toaster/toast/IToast';
 import Toaster, { ToasterContext } from './components/toaster/Toaster';
 import Routing from './Routing';
+import settings from './settings';
 import { getResponseErrorMessage } from './utilities/apiUtilities';
 
 function App() {
@@ -85,7 +86,7 @@ function App() {
         }}>
           <div className="app">
             <header>
-              <a href="/">Party Playlist</a>
+              <a href={settings.baseUrl}>Party Playlist</a>
               <span className="username" onClick={onUsernameClick}>
                 {username}
               </span>

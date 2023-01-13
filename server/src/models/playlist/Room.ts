@@ -29,7 +29,7 @@ export default class Room {
   }
 
   resetExpirationTimer(numMinutes: number) {
-    let newExpDate = new Date();
+    const newExpDate = new Date();
     newExpDate.setMinutes(newExpDate.getMinutes() + numMinutes);
     this.expirationDate = newExpDate;
   }
@@ -44,7 +44,7 @@ export default class Room {
       // User was not in this room.
       return;
     }
-    
+
     console.log(`User ${userSocketId} left room ${this.roomCode}`);
     this.socketIdsInRoom = this.socketIdsInRoom.filter(x => x !== userSocketId);
 
@@ -84,7 +84,7 @@ export default class Room {
       return {
         contributor,
         numPlayed: contributedSongs.filter(x => x.wasPlayed || x.youtubeVideoId === currSongId).length,
-        nextSuggestion: nextSuggestion,
+        nextSuggestion,
       };
     }).filter(x => x.nextSuggestion);
 

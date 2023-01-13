@@ -34,7 +34,7 @@ export default function getRoomsController(socketManager: SocketClientManagement
     }
 
     res.status(200).json({
-      roomCode: roomCode,
+      roomCode,
     });
   });
 
@@ -76,7 +76,7 @@ export default function getRoomsController(socketManager: SocketClientManagement
       if (room) {
         room.onUserDisconnected(socket.id);
       }
-      
+
       // Join stash's room.
       socket.leave(`ROOM_${data.roomCode}`);
     },
