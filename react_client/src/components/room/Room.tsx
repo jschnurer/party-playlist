@@ -29,18 +29,13 @@ const Room: React.FC = () => {
 
   const onPlayNextSongClick = useCallback(async () => {
     await requestor?.trackRequest(RoomApi.playNext(roomCode));
-  }, [roomCode]);
+  }, [roomCode, requestor]);
 
   useEffect(() => {
-    if (!roomCode
-      || !toaster) {
-      return;
-    }
+    const client = socketIOClient(settings.socketEndpoint);
+    socketRef.current = client;
 
-    const socketClient = socketIOClient(settings.socketEndpoint);
-    socketRef.current = socketClient;
-
-    socketClient.on("songInfo", (msg: ISongInfoMessage) => {
+    socketRef.current.on("songInfo", (msg: ISongInfoMessage) => {
       setPlaylistState({
         nowPlaying: msg.nowPlaying,
         nextUp: msg.nextUp,
@@ -56,26 +51,33 @@ const Room: React.FC = () => {
       }
     });
 
-    socketClient.on("error", (msg) => {
+    socketRef.current.on("error", (msg) => {
       toaster?.showToast({
         message: msg,
         type: "error",
       });
     });
 
-    socketClient.emit("message", {
+    socketRef.current.emit("message", {
       type: "joinRoom",
       roomCode,
     });
 
-    return () => {
-      socketClient.emit("message", {
+    const closeEvent = () => {
+      socketRef.current?.emit("message", {
         type: "leaveRoom",
         roomCode,
       });
-      socketClient.disconnect();
+      socketRef.current?.disconnect();
     };
-  }, [roomCode, onPlayNextSongClick]);
+
+    window.addEventListener("beforeunload", closeEvent);
+
+    return () => {
+      window.removeEventListener("beforeunload", closeEvent);
+      closeEvent();
+    };
+  }, []);
 
   const onAddSong = async (title: string, id: string) => {
     await requestor?.trackRequest(RoomApi.addVideo(roomCode, {
@@ -123,7 +125,6 @@ const Room: React.FC = () => {
                     }}
                     onReady={event => {
                       youtubePlayer.current = event.target;
-                      (window as any).player = event.target;
                     }}
                     onEnd={() => {
                       onPlayNextSongClick();

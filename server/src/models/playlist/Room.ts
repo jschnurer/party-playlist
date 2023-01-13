@@ -13,7 +13,6 @@ export default class Room {
   private owner: string;
   /** The socket.io server. */
   private socketServer: SocketClientManagement;
-  private readonly creationDate: Date;
   private expirationDate: Date;
   private socketIdsInRoom: string[] = [];
 
@@ -22,31 +21,36 @@ export default class Room {
     this.owner = properties.ownerUUId;
     this.socketServer = properties.socketServer;
 
-    this.creationDate = new Date();
-    this.resetExpirationTimer(1);
+    this.resetExpirationTimer(60);
   }
 
   getExpirationDate() {
     return this.expirationDate;
   }
 
-  resetExpirationTimer(numHours: number) {
+  resetExpirationTimer(numMinutes: number) {
     let newExpDate = new Date();
-    newExpDate.setHours(newExpDate.getHours() + numHours);
+    newExpDate.setMinutes(newExpDate.getMinutes() + numMinutes);
     this.expirationDate = newExpDate;
   }
 
   onUserJoined(userSocketId: string) {
     this.socketIdsInRoom.push(userSocketId);
-    this.resetExpirationTimer(1);
+    this.resetExpirationTimer(60);
   }
 
   onUserDisconnected(userSocketId: string) {
+    if (!this.socketIdsInRoom.some(x => x === userSocketId)) {
+      // User was not in this room.
+      return;
+    }
+    
+    console.log(`User ${userSocketId} left room ${this.roomCode}`);
     this.socketIdsInRoom = this.socketIdsInRoom.filter(x => x !== userSocketId);
 
     if (!this.socketIdsInRoom.length) {
       // The last person left. They have 10 minutes to return or this room will die.
-      this.resetExpirationTimer(0.1666);
+      this.resetExpirationTimer(10);
     }
   }
 
@@ -133,15 +137,19 @@ export default class Room {
   }
 
   addSong(song: ISong) {
-    this.resetExpirationTimer(1);
+    this.resetExpirationTimer(60);
 
     this.songs.push(song);
+
+    if (!this.getCurrentSong()) {
+      this.playNextSong();
+    }
 
     this.emitSocketInfo();
   }
 
   playNextSong(): ISong | undefined {
-    this.resetExpirationTimer(1);
+    this.resetExpirationTimer(60);
 
     if (this.currentSong) {
       this.currentSong.wasPlayed = true;
@@ -181,7 +189,7 @@ export default class Room {
 
   destroySelf() {
     console.log(`Room ${this.roomCode} has expired.`);
-    
+
     // Let everyone know the room has expired.
     this.socketServer
       .io

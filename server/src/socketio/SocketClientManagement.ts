@@ -1,4 +1,5 @@
 import http from "http";
+import RoomDb from "roomDb";
 import * as SocketIO from "socket.io";
 
 export class SocketClientManagement {
@@ -39,6 +40,7 @@ export class SocketClientManagement {
 
       socket.on('disconnect', () => {
         console.log(`Socket client ${socket.id} disconnected.`);
+        RoomDb.Instance.socketDisconnected(socket);
       });
     });
   }
