@@ -4,12 +4,30 @@ import { SocketClientManagement } from "socketio/SocketClientManagement";
 class RoomDb {
   private static _instance: RoomDb;
   private rooms: { [name: string]: Room } = {};
+  private readonly expirationTimer: NodeJS.Timer;
 
   private constructor() {
+    // Every 5 minutes.
+    this.expirationTimer = setInterval(this.runRoomCleanup, 300000);
   }
 
   public static get Instance() {
     return this._instance || (this._instance = new this());
+  }
+
+  public runRoomCleanup() {
+    const now = new Date();
+
+    for (const roomCode in Object.keys(RoomDb.Instance.rooms)) {
+      const room = this.getRoom(roomCode);
+
+      if (room
+        && room.getExpirationDate() >= now) {
+        // This room is too old and must be euthanized.
+        room.destroySelf();
+        delete this.rooms[roomCode];
+      }
+    }
   }
 
   public getRoom(roomCode: string | undefined): Room | undefined {
@@ -35,8 +53,6 @@ class RoomDb {
       ownerUUId: creatorUUId,
       socketServer,
     });
-
-    console.debug(`Created room '${roomCode}'.`);
 
     return this.rooms[roomCode];
   }

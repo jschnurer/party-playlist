@@ -25,6 +25,7 @@ const Room: React.FC = () => {
   const nameContext = useContext(NameContext);
   const username = nameContext?.username || "";
   const youtubePlayer = useRef<YouTubePlayer>(null);
+  const [showPlayerIfOwner, setShowPlayerIfOwner] = useState(false);
 
   const onPlayNextSongClick = useCallback(async () => {
     await requestor?.trackRequest(RoomApi.playNext(roomCode));
@@ -73,7 +74,6 @@ const Room: React.FC = () => {
         roomCode,
       });
       socketClient.disconnect();
-      console.log("disconnect socket");
     };
   }, [roomCode, onPlayNextSongClick]);
 
@@ -89,7 +89,7 @@ const Room: React.FC = () => {
       ? "'"
       : "'s"
       } Room - ${roomCode}`;
-  }
+  };
 
   return (
     <div className="flex-col">
@@ -107,35 +107,54 @@ const Room: React.FC = () => {
 
       {username === playlistState.roomOwner &&
         <div className="youtube-embed flex-col">
-          {playlistState.nowPlaying?.youtubeVideoId !== undefined &&
-            <YouTube
-              iframeClassName="youtube-iframe"
-              videoId={playlistState.nowPlaying.youtubeVideoId}
-              opts={{
-                height: 390,
-                width: 640,
-                playerVars: {
-                  autoplay: 1,
-                },
-              }}
-              onReady={event => {
-                youtubePlayer.current = event.target;
-                (window as any).player = event.target;
-              }}
-              onEnd={() => {
-                onPlayNextSongClick();
-              }}
-            />
-          }
+          {showPlayerIfOwner
+            ? (
+              <>
+                {playlistState.nowPlaying?.youtubeVideoId !== undefined &&
+                  <YouTube
+                    iframeClassName="youtube-iframe"
+                    videoId={playlistState.nowPlaying.youtubeVideoId}
+                    opts={{
+                      height: 390,
+                      width: 640,
+                      playerVars: {
+                        autoplay: 1,
+                      },
+                    }}
+                    onReady={event => {
+                      youtubePlayer.current = event.target;
+                      (window as any).player = event.target;
+                    }}
+                    onEnd={() => {
+                      onPlayNextSongClick();
+                    }}
+                  />
+                }
 
-          <div className="flex-row">
-            <button
-              onClick={onPlayNextSongClick}
-              disabled={playlistState.nextUp === undefined}
-            >
-              Play next song
-            </button>
-          </div>
+                <div className="flex-row">
+                  <button
+                    onClick={onPlayNextSongClick}
+                    disabled={playlistState.nextUp === undefined}
+                  >
+                    &#5861; Play next song
+                  </button>
+
+                  <button
+                    onClick={() => setShowPlayerIfOwner(false)}
+                  >
+                    ⍉ Hide video player
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex-row">
+                <button
+                  onClick={() => setShowPlayerIfOwner(true)}
+                >
+                  👁 Show video player
+                </button>
+              </div>
+            )}
         </div>
       }
 

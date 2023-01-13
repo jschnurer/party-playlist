@@ -50,8 +50,6 @@ useRouter(getSongsController());
 socketServer.start();
 
 app.get("*", (req, res, next) => {
-  console.log(req);
-  console.log(res);
   next();
 });
 

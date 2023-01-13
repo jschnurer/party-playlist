@@ -10,7 +10,7 @@ function errorHandler(
 ) {
   let customError = err;
 
-  console.log(err);
+  console.error(err);
 
   if (!(err instanceof ApiError)) {
     customError = new CustomError(`Something went very wrong.`, ErrorTypes.InternalError);

@@ -42,10 +42,7 @@ export default function getRoomsController(socketManager: SocketClientManagement
   socketManager.addMessageListener({
     messageType: "joinRoom",
     listener: (data: { roomCode?: string }, socket: SocketIO.Socket) => {
-      console.log("SOCKET: joinRoom", data);
-
       if (!data.roomCode) {
-        console.log("joinRoom: No roomCode specified!");
         socket.emit("error",
           "No roomCode specified in data.");
         return;
@@ -54,13 +51,13 @@ export default function getRoomsController(socketManager: SocketClientManagement
       const room = RoomDb.Instance.getRoom(data.roomCode);
 
       if (!room) {
-        console.log(`joinRoom: Room ${data.roomCode} not found.`);
         socket.emit("error", `Room ${data.roomCode} not found.`);
         return;
       } else {
         // Join the room.
         socket.join(`ROOM_${data.roomCode}`);
 
+        room.onUserJoined(socket.id);
         room.emitSocketInfo(socket);
       }
     },
@@ -75,6 +72,11 @@ export default function getRoomsController(socketManager: SocketClientManagement
         return;
       }
 
+      const room = RoomDb.Instance.getRoom(data.roomCode);
+      if (room) {
+        room.onUserDisconnected(socket.id);
+      }
+      
       // Join stash's room.
       socket.leave(`ROOM_${data.roomCode}`);
     },

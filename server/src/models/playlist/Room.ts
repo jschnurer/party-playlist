@@ -13,11 +13,41 @@ export default class Room {
   private owner: string;
   /** The socket.io server. */
   private socketServer: SocketClientManagement;
+  private readonly creationDate: Date;
+  private expirationDate: Date;
+  private socketIdsInRoom: string[] = [];
 
   constructor(properties: IPlaylistConstructorArgs) {
     this.roomCode = properties.roomCode;
     this.owner = properties.ownerUUId;
     this.socketServer = properties.socketServer;
+
+    this.creationDate = new Date();
+    this.resetExpirationTimer(1);
+  }
+
+  getExpirationDate() {
+    return this.expirationDate;
+  }
+
+  resetExpirationTimer(numHours: number) {
+    let newExpDate = new Date();
+    newExpDate.setHours(newExpDate.getHours() + numHours);
+    this.expirationDate = newExpDate;
+  }
+
+  onUserJoined(userSocketId: string) {
+    this.socketIdsInRoom.push(userSocketId);
+    this.resetExpirationTimer(1);
+  }
+
+  onUserDisconnected(userSocketId: string) {
+    this.socketIdsInRoom = this.socketIdsInRoom.filter(x => x !== userSocketId);
+
+    if (!this.socketIdsInRoom.length) {
+      // The last person left. They have 10 minutes to return or this room will die.
+      this.resetExpirationTimer(0.1666);
+    }
   }
 
   getOwner() {
@@ -103,14 +133,16 @@ export default class Room {
   }
 
   addSong(song: ISong) {
-    this.songs.push(song);
+    this.resetExpirationTimer(1);
 
-    console.debug(`Added song with videoId '${song.youtubeVideoId}' to room '${this.roomCode}'.`);
+    this.songs.push(song);
 
     this.emitSocketInfo();
   }
 
   playNextSong(): ISong | undefined {
+    this.resetExpirationTimer(1);
+
     if (this.currentSong) {
       this.currentSong.wasPlayed = true;
     }
@@ -120,8 +152,6 @@ export default class Room {
     if (nextSong) {
       this.currentSong = nextSong;
     }
-
-    console.debug(`Next song is now '${nextSong?.youtubeVideoId}' in room '${this.roomCode}'.`);
 
     this.emitSocketInfo();
 
@@ -147,8 +177,22 @@ export default class Room {
         .to(`ROOM_${this.roomCode}`)
         .emit("songInfo", songInfo);
     }
+  }
 
-    console.debug(`Emitted ${JSON.stringify(songInfo)} to ROOM_${this.roomCode}.`);
+  destroySelf() {
+    console.log(`Room ${this.roomCode} has expired.`);
+    
+    // Let everyone know the room has expired.
+    this.socketServer
+      .io
+      .to(`ROOM_${this.roomCode}`)
+      .emit("error", "The room has expired. To continue partying, create a new room.");
+
+    // Kick everyone off the socket connection.
+    this.socketServer
+      .io
+      .to(`ROOM_${this.roomCode}`)
+      .disconnectSockets();
   }
 }
 

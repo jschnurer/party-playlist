@@ -9,6 +9,11 @@ header {
   display: flex;
   justify-content: space-between;
 
+  a {
+    text-decoration: none;
+    color: theme.$color;
+  }
+
   .username {
     cursor: pointer;
     font-variant: normal;

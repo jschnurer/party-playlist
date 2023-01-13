@@ -85,7 +85,7 @@ function App() {
         }}>
           <div className="app">
             <header>
-              <span>Party Playlist</span>
+              <a href="/">Party Playlist</a>
               <span className="username" onClick={onUsernameClick}>
                 {username}
               </span>
