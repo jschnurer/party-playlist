@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import YouTube, { YouTubePlayer } from "react-youtube";
 import socketIOClient, { Socket } from "socket.io-client";
 import RoomApi from "../../api/RoomApi";
 import settings from "../../settings";
@@ -15,6 +16,7 @@ const Room: React.FC = () => {
   const toaster = useContext(ToasterContext);
   const socketRef = useRef<Socket | null>(null);
   const { code } = useParams();
+  const roomCode = code || "";
   const [playlistState, setPlaylistState] = useState<IPlaylistState>({
     roomOwner: "",
   });
@@ -22,9 +24,15 @@ const Room: React.FC = () => {
   const requestor = useContext(RequestorContext);
   const nameContext = useContext(NameContext);
   const username = nameContext?.username || "";
+  const youtubePlayer = useRef<YouTubePlayer>(null);
+
+  const onPlayNextSongClick = useCallback(async () => {
+    await requestor?.trackRequest(RoomApi.playNext(roomCode));
+  }, [roomCode]);
 
   useEffect(() => {
-    if (!code) {
+    if (!roomCode
+      || !toaster) {
       return;
     }
 
@@ -37,6 +45,14 @@ const Room: React.FC = () => {
         nextUp: msg.nextUp,
         roomOwner: msg.roomOwner || "???",
       });
+
+      if (msg.nowPlaying
+        && msg.nowPlaying.youtubeVideoId !== youtubePlayer.current?.getVideoData().video_id) {
+        youtubePlayer.current?.loadVideoById(msg.nowPlaying.youtubeVideoId);
+      } else if (youtubePlayer.current?.getPlayerState() === 0
+        && msg.nextUp) {
+        onPlayNextSongClick();
+      }
     });
 
     socketClient.on("error", (msg) => {
@@ -48,20 +64,21 @@ const Room: React.FC = () => {
 
     socketClient.emit("message", {
       type: "joinRoom",
-      roomCode: code,
+      roomCode,
     });
 
     return () => {
       socketClient.emit("message", {
         type: "leaveRoom",
-        roomCode: code,
+        roomCode,
       });
       socketClient.disconnect();
+      console.log("disconnect socket");
     };
-  }, [code]);
+  }, [roomCode, onPlayNextSongClick]);
 
   const onAddSong = async (title: string, id: string) => {
-    await requestor?.trackRequest(RoomApi.addVideo(code || "", {
+    await requestor?.trackRequest(RoomApi.addVideo(roomCode, {
       youtubeVideoId: id,
       youtubeVideoTitle: title,
     }));
@@ -71,12 +88,8 @@ const Room: React.FC = () => {
     return `${playlistState.roomOwner}${playlistState.roomOwner.toLowerCase().endsWith('s')
       ? "'"
       : "'s"
-      } Room (${code})`;
+      } Room - ${roomCode}`;
   }
-
-  const onPlayNextSongClick = () => {
-    
-  };
 
   return (
     <div className="flex-col">
@@ -93,16 +106,25 @@ const Room: React.FC = () => {
       </div>
 
       {username === playlistState.roomOwner &&
-        <div className="youtube-embed">
+        <div className="youtube-embed flex-col">
           {playlistState.nowPlaying?.youtubeVideoId !== undefined &&
-            <iframe
-              width="853"
-              height="480"
-              src={`https://www.youtube.com/embed/${playlistState.nowPlaying?.youtubeVideoId}?origin=${window.location.origin}`}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              title="Embedded youtube"
+            <YouTube
+              iframeClassName="youtube-iframe"
+              videoId={playlistState.nowPlaying.youtubeVideoId}
+              opts={{
+                height: 390,
+                width: 640,
+                playerVars: {
+                  autoplay: 1,
+                },
+              }}
+              onReady={event => {
+                youtubePlayer.current = event.target;
+                (window as any).player = event.target;
+              }}
+              onEnd={() => {
+                onPlayNextSongClick();
+              }}
             />
           }
 

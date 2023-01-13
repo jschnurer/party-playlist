@@ -15,7 +15,7 @@ class RoomApi {
   }
 
   async createRoom(abortSignal?: AbortSignal): Promise<string> {
-    const response = await apiPostJson(getApiUrl("/rooms"), abortSignal);
+    const response = await apiPostJson(getApiUrl("/rooms"), {}, abortSignal);
 
     await throwIfResponseError(response);
 
@@ -25,6 +25,11 @@ class RoomApi {
   async addVideo(roomCode: string, video: IAddVideoRequest, abortSignal?: AbortSignal): Promise<void> {
     const response = await apiPostJson(getApiUrl(`/rooms/${roomCode}/songs`), video, abortSignal);
 
+    await throwIfResponseError(response);
+  }
+
+  async playNext(roomCode: string, abortSignal?: AbortSignal): Promise<void> {
+    const response = await apiPostJson(getApiUrl(`/rooms/${roomCode}/songs/playNext`), {}, abortSignal);
     await throwIfResponseError(response);
   }
 }
