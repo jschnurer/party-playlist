@@ -26,6 +26,7 @@ const TextInput: React.FC<ITextInputProps> = ({
 
   useEffect(() => {
     if (autoFocus) {
+      window.setTimeout(() => ref.current?.focus(), 50);
       ref.current?.focus();
     }
   }, [autoFocus, ref]);

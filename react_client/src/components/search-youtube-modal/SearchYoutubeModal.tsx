@@ -69,7 +69,7 @@ const SearchYoutubeModal: React.FC<ISearchYoutubeModalProps> = ({
       body={
         <div className="flex-col-narrow">
           {videos.length === 0 &&
-            "No videos found. Use the search box above to search for videos."
+            "Use the search box above to search for videos. Then click the \"Suggest\" button next to whichever song(s) you want to suggest."
           }
 
           {videos.map(v =>

@@ -19,7 +19,7 @@ function App() {
   };
 
   function trackRequest<T>(request: Promise<T>) {
-    setOngoingRequests([...ongoingRequests, request as Promise<any>]);
+    setOngoingRequests(reqs => [...reqs, request as Promise<any>]);
 
     request
       .catch(err => {

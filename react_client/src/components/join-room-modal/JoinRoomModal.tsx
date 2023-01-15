@@ -57,7 +57,7 @@ const JoinRoomModal: React.FC<IJoinRoomModalProps> = ({
             placeholder="Room code..."
             hint="The code of the room to join. Ask the host for this!"
             maxLength={5}
-            autoFocus
+            autoFocus={true}
           />
         </form>
       }

@@ -18,7 +18,6 @@ $divider-color: adjust-color(theme.$background-color, $lightness: 70%);
     "foot";
   row-gap: theme.$padding-narrow;
   grid-template-rows: min-content 1fr min-content;
-  margin: theme.$padding;
 
   max-height: 95%;
   max-width: 95%;
@@ -72,6 +71,7 @@ $divider-color: adjust-color(theme.$background-color, $lightness: 70%);
   position: fixed;
   inset: 0;
   display: flex;
+  margin: theme.$padding;
   align-content: center;
   align-items: center;
   justify-content: center;
@@ -85,5 +85,15 @@ $divider-color: adjust-color(theme.$background-color, $lightness: 70%);
     margin: 0;
     max-height: 100% !important;
     max-width: 100% !important;
+
+    .corner-grip {
+      display: none;
+    }
+
+    .head {
+      &.draggable {
+        cursor: initial;
+      }
+    }
   }
 }
