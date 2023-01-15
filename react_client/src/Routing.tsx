@@ -1,10 +1,11 @@
 import React from "react";
 import {
   createBrowserRouter,
+  Navigate,
   RouterProvider
 } from "react-router-dom";
 import Home from "./components/home/Home";
-import Room from "./components/room/Room";
+import RoomChecker from "./components/room/RoomChecker";
 import settings from "./settings";
 
 const router = createBrowserRouter([
@@ -14,8 +15,12 @@ const router = createBrowserRouter([
   },
   {
     path: "/room/:code",
-    element: <Room />,
+    element: <RoomChecker />,
   },
+  {
+    path: "*",
+    element: <Navigate to="/" replace />,
+  }
 ], {
   basename: settings.baseUrl,
 });

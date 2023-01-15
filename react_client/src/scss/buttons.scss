@@ -12,6 +12,14 @@ button,
   border-radius: theme.$padding-narrow;
   padding: theme.$padding-narrow;
 
+  img {
+    height: theme.$font-size * 1.2;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    vertical-align: bottom;
+  }
+
   &:disabled {
     background-color: adjust-color($color: theme.$color, $lightness: -50%);
     color: adjust-color($color: theme.$background-color, $lightness: 50%);

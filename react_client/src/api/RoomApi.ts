@@ -8,8 +8,14 @@ class RoomApi {
 
     await throwIfResponseError(response, { [404]: "That room doesn't exist!" });
 
+    const json = await response.json();
+
+    if (!json.roomCode?.toString()?.trim()) {
+      throw Error("That room doesn't exist!");
+    }
+
     return {
-      roomCode,
+      roomCode: json.roomCode.toString().trim(),
       exists: true,
     };
   }

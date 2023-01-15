@@ -5,6 +5,7 @@ import TextInput from "../inputs/TextInput";
 import Modal from "../modal/Modal";
 import { RequestorContext } from "../requestor/Requestor";
 import { ToasterContext } from "../toaster/Toaster";
+import "./SearchYoutubeModal.scss";
 import VideoSearchResult from "./video-search-result/VideoSearchResult";
 
 interface ISearchYoutubeModalProps {
@@ -48,6 +49,7 @@ const SearchYoutubeModal: React.FC<ISearchYoutubeModalProps> = ({
             e.preventDefault();
             onSearchYoutube();
           }}
+          className="flex-row-narrow search-form"
         >
           <TextInput
             onChange={setSearchText}
@@ -56,6 +58,12 @@ const SearchYoutubeModal: React.FC<ISearchYoutubeModalProps> = ({
             placeholder="Search Youtube..."
             maxLength={200}
           />
+
+          <button
+            className="primary"
+          >
+            search
+          </button>
         </form>
       }
       body={

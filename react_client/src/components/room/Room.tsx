@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import YouTube, { YouTubePlayer } from "react-youtube";
 import socketIOClient, { Socket } from "socket.io-client";
 import RoomApi from "../../api/RoomApi";
+import nextButtonIcon from "../../media/icons/next-button.svg";
+import soundOffIcon from "../../media/icons/sound-off.svg";
+import soundOnIcon from "../../media/icons/sound-on.svg";
 import settings from "../../settings";
 import ISongInfoMessage from "../../socket/messages/from-server/ISongInfoMessage";
 import { NameContext } from "../name-input/NameValidator";
@@ -32,7 +35,7 @@ const Room: React.FC = () => {
   }, [roomCode, requestor]);
 
   useEffect(() => {
-    const client = socketIOClient("/", { path: settings.socketEndpoint + "/socket.io/" });
+    const client = socketIOClient(settings.socketEndpoint);
     socketRef.current = client;
 
     socketRef.current.on("songInfo", (msg: ISongInfoMessage) => {
@@ -84,6 +87,11 @@ const Room: React.FC = () => {
       youtubeVideoId: id,
       youtubeVideoTitle: title,
     }));
+
+    toaster?.showToast({
+      message: `Suggested ${title}!`,
+      type: "success",
+    });
   };
 
   const getRoomTitle = () => {
@@ -101,7 +109,7 @@ const Room: React.FC = () => {
       </h1>
 
       <div className="flex-col-narrow">
-        <h3 className="song-title">Now Playing: {playlistState.nowPlaying?.title || "--"}</h3>
+        <h3 className="song-title">Now Playing: {decodeHtml(playlistState.nowPlaying?.title || "") || "--"}</h3>
         {playlistState.nowPlaying &&
           <h4 className="song-contributor">Contributed by: {playlistState.nowPlaying.contributor}</h4>
         }
@@ -137,13 +145,13 @@ const Room: React.FC = () => {
                     onClick={onPlayNextSongClick}
                     disabled={playlistState.nextUp === undefined}
                   >
-                    &#5861; Play next song
+                    <img src={nextButtonIcon} alt="" /> Play next song
                   </button>
 
                   <button
                     onClick={() => setShowPlayerIfOwner(false)}
                   >
-                    ⍉ Hide video player
+                    <img src={soundOffIcon} alt="" /> Hide video player
                   </button>
                 </div>
               </>
@@ -152,7 +160,7 @@ const Room: React.FC = () => {
                 <button
                   onClick={() => setShowPlayerIfOwner(true)}
                 >
-                  👁 Show video player
+                  <img src={soundOnIcon} alt="" /> Show video player
                 </button>
               </div>
             )}
@@ -160,7 +168,7 @@ const Room: React.FC = () => {
       }
 
       <div className="flex-col-narrow">
-        <h3 className="song-title">Next Up: {playlistState.nextUp?.title || "--"}</h3>
+        <h3 className="song-title">Next Up: {decodeHtml(playlistState.nextUp?.title || "") || "--"}</h3>
         {playlistState.nextUp &&
           <h4 className="song-contributor">Contributed by: {playlistState.nextUp.contributor}</h4>
         }
@@ -181,3 +189,9 @@ const Room: React.FC = () => {
 };
 
 export default Room;
+
+function decodeHtml(html: string) {
+  var txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+}
