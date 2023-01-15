@@ -35,7 +35,9 @@ const Room: React.FC = () => {
   }, [roomCode, requestor]);
 
   useEffect(() => {
-    const client = socketIOClient(settings.socketEndpoint);
+    const client = settings.socketEndpoint.indexOf("localhost") > -1
+      ? socketIOClient(settings.socketEndpoint)
+      : socketIOClient("/", { path: settings.socketEndpoint + "/socket.io/" });
     socketRef.current = client;
 
     socketRef.current.on("songInfo", (msg: ISongInfoMessage) => {
