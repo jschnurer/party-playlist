@@ -28,7 +28,8 @@ const Room: React.FC = () => {
   const nameContext = useContext(NameContext);
   const username = nameContext?.username || "";
   const youtubePlayer = useRef<YouTubePlayer>(null);
-  const [showPlayerIfOwner, setShowPlayerIfOwner] = useState(false);
+  const [isVideoPlayerVisible, setIsVideoPlayerVisible] = useState(false);
+  const isUserOwner = playlistState.roomOwner.toLowerCase() === username.toLowerCase();
 
   const onPlayNextSongClick = useCallback(async () => {
     await requestor?.trackRequest(RoomApi.playNext(roomCode));
@@ -117,12 +118,12 @@ const Room: React.FC = () => {
         }
       </div>
 
-      {username === playlistState.roomOwner &&
-        <div className="youtube-embed flex-col">
-          {showPlayerIfOwner
-            ? (
-              <>
-                {playlistState.nowPlaying?.youtubeVideoId !== undefined &&
+      <div className="youtube-embed flex-col">
+        {isVideoPlayerVisible &&
+          <>
+            {playlistState.nowPlaying?.youtubeVideoId !== undefined
+              ? (
+                <>
                   <YouTube
                     iframeClassName="youtube-iframe"
                     videoId={playlistState.nowPlaying.youtubeVideoId}
@@ -137,37 +138,39 @@ const Room: React.FC = () => {
                       youtubePlayer.current = event.target;
                     }}
                     onEnd={() => {
-                      onPlayNextSongClick();
+                      if (isUserOwner) {
+                        onPlayNextSongClick();
+                      }
                     }}
                   />
+
+                  {isUserOwner
+                  ? <span>(You are the owner of the room. The playlist will advance to the next song after it finishes playing on this device.)</span>
+                  : <span>(You are not the owner of the room. The playlist will advance to the next song after it finishes playing on the owner's device.)</span>
                 }
+                </>
+              ) : <span>(Video will be shown when a song starts playing.)</span>
+            }
+          </>
+        }
 
-                <div className="flex-row">
-                  <button
-                    onClick={onPlayNextSongClick}
-                    disabled={playlistState.nextUp === undefined}
-                  >
-                    <img src={nextButtonIcon} alt="" /> Play next song
-                  </button>
+        <div className="flex-row">
+          {isUserOwner &&
+            <button
+              onClick={onPlayNextSongClick}
+              disabled={playlistState.nextUp === undefined}
+            >
+              <img src={nextButtonIcon} alt="" /> Play next song
+            </button>
+          }
 
-                  <button
-                    onClick={() => setShowPlayerIfOwner(false)}
-                  >
-                    <img src={soundOffIcon} alt="" /> Hide video player
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className="flex-row">
-                <button
-                  onClick={() => setShowPlayerIfOwner(true)}
-                >
-                  <img src={soundOnIcon} alt="" /> Show video player
-                </button>
-              </div>
-            )}
+          <button
+            onClick={() => setIsVideoPlayerVisible(isVisible => !isVisible)}
+          >
+            <img src={isVideoPlayerVisible ? soundOffIcon : soundOnIcon} alt="" /> {isVideoPlayerVisible ? "Hide" : "Show"} video player
+          </button>
         </div>
-      }
+      </div>
 
       <div className="flex-col-narrow">
         <h3 className="song-title">Next Up: {decodeHtml(playlistState.nextUp?.title || "") || "--"}</h3>
