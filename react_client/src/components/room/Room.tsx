@@ -7,6 +7,7 @@ import nextButtonIcon from "../../media/icons/next-button.svg";
 import soundOffIcon from "../../media/icons/sound-off.svg";
 import soundOnIcon from "../../media/icons/sound-on.svg";
 import settings from "../../settings";
+import IParticipantInfoMessage from "../../socket/messages/from-server/IParticipantInfoMessage";
 import ISongInfoMessage from "../../socket/messages/from-server/ISongInfoMessage";
 import { NameContext } from "../name-input/NameValidator";
 import { RequestorContext } from "../requestor/Requestor";
@@ -30,6 +31,7 @@ const Room: React.FC = () => {
   const youtubePlayer = useRef<YouTubePlayer>(null);
   const [isVideoPlayerVisible, setIsVideoPlayerVisible] = useState(false);
   const isUserOwner = playlistState.roomOwner.toLowerCase() === username.toLowerCase();
+  const [participants, setParticipants] = useState<string[]>([]);
 
   const onPlayNextSongClick = useCallback(async () => {
     await requestor?.trackRequest(RoomApi.playNext(roomCode));
@@ -37,8 +39,8 @@ const Room: React.FC = () => {
 
   useEffect(() => {
     const client = settings.socketEndpoint.indexOf("localhost") > -1
-      ? socketIOClient(settings.socketEndpoint)
-      : socketIOClient("/", { path: settings.socketEndpoint + "/socket.io/" });
+      ? socketIOClient(settings.socketEndpoint, { auth: { name: username, } })
+      : socketIOClient("/", { path: settings.socketEndpoint + "/socket.io/", auth: { name: username, } });
     socketRef.current = client;
 
     socketRef.current.on("songInfo", (msg: ISongInfoMessage) => {
@@ -55,6 +57,10 @@ const Room: React.FC = () => {
         && msg.nextUp) {
         onPlayNextSongClick();
       }
+    });
+
+    socketRef.current.on("participantInfo", (msg: IParticipantInfoMessage) => {
+      setParticipants(Array.from(new Set(msg.participants)));
     });
 
     socketRef.current.on("error", (msg) => {
@@ -105,90 +111,105 @@ const Room: React.FC = () => {
   };
 
   return (
-    <div className="flex-col">
+    <div className="flex-row">
+      <div className="flex-col playlist">
 
-      <h1 className="room-title">
-        {getRoomTitle()}
-      </h1>
+        <h1 className="room-title">
+          {getRoomTitle()}
+        </h1>
 
-      <div className="flex-col-narrow">
-        <h3 className="song-title">Now Playing: {decodeHtml(playlistState.nowPlaying?.title || "") || "--"}</h3>
-        {playlistState.nowPlaying &&
-          <h4 className="song-contributor">Contributed by: {playlistState.nowPlaying.contributor}</h4>
-        }
-      </div>
+        <div className="flex-col-narrow">
+          <h3 className="song-title">Now Playing: {decodeHtml(playlistState.nowPlaying?.title || "") || "--"}</h3>
+          {playlistState.nowPlaying &&
+            <h4 className="song-contributor">Contributed by: {playlistState.nowPlaying.contributor}</h4>
+          }
+        </div>
 
-      <div className="youtube-embed flex-col">
-        {isVideoPlayerVisible &&
-          <>
-            {playlistState.nowPlaying?.youtubeVideoId !== undefined
-              ? (
-                <>
-                  <YouTube
-                    iframeClassName="youtube-iframe"
-                    videoId={playlistState.nowPlaying.youtubeVideoId}
-                    opts={{
-                      height: 390,
-                      width: 640,
-                      playerVars: {
-                        autoplay: 1,
-                      },
-                    }}
-                    onReady={event => {
-                      youtubePlayer.current = event.target;
-                    }}
-                    onEnd={() => {
-                      if (isUserOwner) {
-                        onPlayNextSongClick();
-                      }
-                    }}
-                  />
+        <div className="youtube-embed flex-col">
+          {isVideoPlayerVisible &&
+            <>
+              {playlistState.nowPlaying?.youtubeVideoId !== undefined
+                ? (
+                  <>
+                    <YouTube
+                      iframeClassName="youtube-iframe"
+                      videoId={playlistState.nowPlaying.youtubeVideoId}
+                      opts={{
+                        height: 390,
+                        width: 640,
+                        playerVars: {
+                          autoplay: 1,
+                        },
+                      }}
+                      onReady={event => {
+                        youtubePlayer.current = event.target;
+                      }}
+                      onEnd={() => {
+                        if (isUserOwner) {
+                          onPlayNextSongClick();
+                        }
+                      }}
+                    />
 
-                  {isUserOwner
-                  ? <span>(You are the owner of the room. The playlist will advance to the next song after it finishes playing on this device.)</span>
-                  : <span>(You are not the owner of the room. The playlist will advance to the next song after it finishes playing on the owner's device.)</span>
-                }
-                </>
-              ) : <span>(Video will be shown when a song starts playing.)</span>
-            }
-          </>
-        }
-
-        <div className="flex-row">
-          {isUserOwner &&
-            <button
-              onClick={onPlayNextSongClick}
-              disabled={playlistState.nextUp === undefined}
-            >
-              <img src={nextButtonIcon} alt="" /> Play next song
-            </button>
+                    {isUserOwner
+                      ? <span>(You are the owner of the room. The playlist will advance to the next song after it finishes playing on this device.)</span>
+                      : <span>(You are not the owner of the room. The playlist will advance to the next song after it finishes playing on the owner's device.)</span>
+                    }
+                  </>
+                ) : <span>(Video will be shown when a song starts playing.)</span>
+              }
+            </>
           }
 
-          <button
-            onClick={() => setIsVideoPlayerVisible(isVisible => !isVisible)}
-          >
-            <img src={isVideoPlayerVisible ? soundOffIcon : soundOnIcon} alt="" /> {isVideoPlayerVisible ? "Hide" : "Show"} video player
-          </button>
-        </div>
-      </div>
+          <div className="flex-row">
+            {isUserOwner &&
+              <button
+                onClick={onPlayNextSongClick}
+                disabled={playlistState.nextUp === undefined}
+              >
+                <img src={nextButtonIcon} alt="" /> Play next song
+              </button>
+            }
 
-      <div className="flex-col-narrow">
-        <h3 className="song-title">Next Up: {decodeHtml(playlistState.nextUp?.title || "") || "--"}</h3>
-        {playlistState.nextUp &&
-          <h4 className="song-contributor">Contributed by: {playlistState.nextUp.contributor}</h4>
+            <button
+              onClick={() => setIsVideoPlayerVisible(isVisible => !isVisible)}
+            >
+              <img src={isVideoPlayerVisible ? soundOffIcon : soundOnIcon} alt="" /> {isVideoPlayerVisible ? "Hide" : "Show"} video player
+            </button>
+          </div>
+        </div>
+
+        <div className="flex-col-narrow">
+          <h3 className="song-title">Next Up: {decodeHtml(playlistState.nextUp?.title || "") || "--"}</h3>
+          {playlistState.nextUp &&
+            <h4 className="song-contributor">Contributed by: {playlistState.nextUp.contributor}</h4>
+          }
+        </div>
+
+        <button className="primary" onClick={() => setIsAddSongOpen(true)}>
+          Suggest a song
+        </button>
+
+        {isAddSongOpen &&
+          <SearchYoutubeModal
+            onClose={() => setIsAddSongOpen(false)}
+            onAddSong={onAddSong}
+          />
         }
       </div>
 
-      <button className="primary" onClick={() => setIsAddSongOpen(true)}>
-        Suggest a song
-      </button>
-
-      {isAddSongOpen &&
-        <SearchYoutubeModal
-          onClose={() => setIsAddSongOpen(false)}
-          onAddSong={onAddSong}
-        />
-      }
+      <div className="participants flex-col">
+        <h5>Partiers</h5>
+        <div className="participant-list flex-col-narrow">
+          {participants.map(name =>
+            <Participant
+              key={name}
+              name={name}
+              isOwner={name.toLowerCase() === playlistState.roomOwner.toLowerCase()}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 };
@@ -199,4 +220,18 @@ function decodeHtml(html: string) {
   var txt = document.createElement("textarea");
   txt.innerHTML = html;
   return txt.value;
+}
+
+function Participant({ name, isOwner }: {
+  name: string,
+  isOwner: boolean,
+}) {
+  return (
+    <span
+      className={isOwner ? "owner" : ""}
+      title={isOwner ? `${name} (Room Owner)` : name}
+    >
+      {name}
+    </span>
+  );
 }

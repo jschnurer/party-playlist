@@ -21,7 +21,10 @@ class RoomDb {
       const room = RoomDb.Instance.getRoom(roomCode);
 
       if (room) {
-        room.onUserDisconnected(socket.id);
+        room.onUserDisconnected({
+          socketId: socket.id,
+          name: socket.handshake.auth.name,
+        });
       }
     });
   }

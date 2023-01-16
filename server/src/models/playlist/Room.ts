@@ -1,6 +1,7 @@
 import * as SocketIO from "socket.io";
 import { SocketClientManagement } from "socketio/SocketClientManagement";
 import ISong from "./ISong";
+import IUser from "./IUser";
 
 export default class Room {
   /** The code of the room this playlist represents. */
@@ -14,7 +15,7 @@ export default class Room {
   /** The socket.io server. */
   private socketServer: SocketClientManagement;
   private expirationDate: Date;
-  private socketIdsInRoom: string[] = [];
+  private usersInRoom: IUser[] = [];
 
   constructor(properties: IPlaylistConstructorArgs) {
     this.roomCode = properties.roomCode;
@@ -34,24 +35,27 @@ export default class Room {
     this.expirationDate = newExpDate;
   }
 
-  onUserJoined(userSocketId: string) {
-    this.socketIdsInRoom.push(userSocketId);
+  onUserJoined(user: IUser) {
+    this.usersInRoom.push(user);
     this.resetExpirationTimer(60);
+    this.emitParticipants();
   }
 
-  onUserDisconnected(userSocketId: string) {
-    if (!this.socketIdsInRoom.some(x => x === userSocketId)) {
+  onUserDisconnected(user: IUser) {
+    if (!this.usersInRoom.some(x => x.socketId === user.socketId)) {
       // User was not in this room.
       return;
     }
 
-    console.log(`User ${userSocketId} left room ${this.roomCode}`);
-    this.socketIdsInRoom = this.socketIdsInRoom.filter(x => x !== userSocketId);
+    console.log(`User ${user.name} (${user.socketId}) left room ${this.roomCode}`);
+    this.usersInRoom = this.usersInRoom.filter(x => x.socketId !== user.socketId);
 
-    if (!this.socketIdsInRoom.length) {
+    if (!this.usersInRoom.length) {
       // The last person left. They have 10 minutes to return or this room will die.
       this.resetExpirationTimer(10);
     }
+
+    this.emitParticipants();
   }
 
   getOwner() {
@@ -185,6 +189,17 @@ export default class Room {
         .to(`ROOM_${this.roomCode}`)
         .emit("songInfo", songInfo);
     }
+  }
+
+  emitParticipants() {
+    const participantInfo = {
+      participants: this.usersInRoom.map(x => x.name).slice().sort((a, b) => a < b ? -1 : 1),
+    };
+
+    this.socketServer
+      .io
+      .to(`ROOM_${this.roomCode}`)
+      .emit("participantInfo", participantInfo);
   }
 
   destroySelf() {

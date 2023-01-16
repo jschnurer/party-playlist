@@ -1,4 +1,4 @@
 export default interface IUser {
-  uuid: string,
+  socketId: string,
   name: string,
 }

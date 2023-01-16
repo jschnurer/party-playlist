@@ -20,8 +20,31 @@ header {
   }
 }
 
+body, .root, .app {
+  overflow: hidden;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+
 article {
-  max-width: 900px;
+  flex: auto;
+  width: 900px;
   margin: auto;
   padding: theme.$padding;
+  overflow: auto;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+@media only screen and (max-width: 910px) {
+  article {
+    width: auto;
+    max-width: 100%;
+  }
 }

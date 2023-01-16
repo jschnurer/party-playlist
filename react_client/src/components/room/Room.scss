@@ -1,7 +1,10 @@
+@use "theme";
+
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5 {
   margin: 0;
 }
 
@@ -13,6 +16,34 @@ h4 {
     iframe {
       width: 100%;
       height: auto;
+    }
+  }
+}
+
+.playlist {
+  flex: auto;
+}
+
+.participants {
+  flex-shrink: 1;
+
+  .participant-list {
+    overflow: auto;
+
+    span {
+      max-width: 10em;
+      text-overflow: ellipsis;
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+
+      &.owner {
+        font-weight: bold;
+        
+        &::after {
+          content: "*";
+        }
+      }
     }
   }
 }

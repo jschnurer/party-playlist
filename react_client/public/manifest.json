@@ -3,9 +3,9 @@
   "name": "Party Playlist",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "favicon.svh",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/svg"
     }
   ],
   "start_url": ".",

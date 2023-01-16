@@ -57,7 +57,10 @@ export default function getRoomsController(socketManager: SocketClientManagement
         // Join the room.
         socket.join(`ROOM_${data.roomCode}`);
 
-        room.onUserJoined(socket.id);
+        room.onUserJoined({
+          socketId: socket.id,
+          name: socket.handshake.auth.name,
+        });
         room.emitSocketInfo(socket);
       }
     },
@@ -74,7 +77,10 @@ export default function getRoomsController(socketManager: SocketClientManagement
 
       const room = RoomDb.Instance.getRoom(data.roomCode);
       if (room) {
-        room.onUserDisconnected(socket.id);
+        room.onUserDisconnected({
+          socketId: socket.id,
+          name: socket.handshake.auth.name,
+        });
       }
 
       // Join stash's room.

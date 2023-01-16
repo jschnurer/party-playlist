@@ -51,10 +51,6 @@ useRouter(getSongsController());
 // Set up socket server.
 socketServer.start();
 
-app.get("*", (req, res, next) => {
-  next();
-});
-
 /** Handle file and 404 results. */
 app.get("*", (req: Request, res: Response) => {
   // If file exists, return it.
